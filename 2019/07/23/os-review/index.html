@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="Operating System Review">
+<meta name="keywords" content="OS,Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统基础复习">
+<meta property="og:url" content="http://yoursite.com/2019/07/23/os-review/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="Operating System Review">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-07-23T14:40:23.984Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="操作系统基础复习">
+<meta name="twitter:description" content="Operating System Review">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/23/os-review/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>操作系统基础复习 | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/23/os-review/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">操作系统基础复习
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-07-23 22:16:47 / Modified: 22:40:23" itemprop="dateCreated datePublished" datetime="2019-07-23T22:16:47+08:00">2019-07-23</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>Operating System Review</strong><a id="more"></a></p>
+<h2 id="进程-线程"><a href="#进程-线程" class="headerlink" title="进程 线程"></a>进程 线程</h2><ul>
+<li>一个程序至少有一个进程，一个进程至少有一个（主）线程。</li>
+<li>进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动，进程是系统进行资源分配和调度的一个独立单位。</li>
+<li>线程是进程的一个实体，运行在进程上下文中的一个逻辑流，是CPU调度和分派的基本单位，它是比进程更小的能独立运行的基本单位。</li>
+<li>线程自己基本上不拥有系统资源，只拥有一点在运行中必不可少的资源(如线程ID，程序计数器，一组寄存器和栈)，但是它可与同属一个进程的其他的线程共享进程所拥有的全部资源（代码，全局内存，堆和打开文件）。</li>
+<li>进程有独立的虚拟地址空间，一个进程崩溃后，在保护模式下不会对其它进程产生影响，而线程只是一个进程中的不同执行路径。线程有自己的栈和局部变量，但线程之间没有单独的地址空间。</li>
+<li>线程上下文切换比进程上下文切换要快得多，线程执行开销小，但不利于资源的管理和保护。</li>
+</ul>
+<h2 id="多进程-多线程"><a href="#多进程-多线程" class="headerlink" title="多进程 多线程"></a>多进程 多线程</h2><p>多进程分析：对于父子进程间共享状态信息，进程有一个很清晰的模型：共享文件表，但是不共享用户地址空间。这既是优点也是缺点，这样一来，一个进程不可能不小心覆盖另一个进程的虚拟存储空间；另一方面，独立的虚拟地址空间也使得进程直接共享状态信息变得更加困难，为了共享信息，它们必须使用显示的IPC机制。基于进程的设计另一个缺点是：它们往往比较慢，因为进程控制和IPC开销很高。</p>
+<p>多线程：往反方向思考。。。</p>
+<h3 id="fork"><a href="#fork" class="headerlink" title="fork()"></a>fork()</h3><p>父进程通过调用fork()函数创建一个新的运行子进程，子进程几乎但不是完全与父进程相同。子进程得到与父进程用户级虚拟地址空间相同的（但是独立的）一份拷贝，包括文本、数据和bss段（用来存放程序中未初始化的全局变量和静态变量的一块内存区域）、堆以及用户栈。它们之间最大的区别就是有不同的PID。</p>
+<p>fork函数被调用一次，却会返回两次：一次是在调用进程（父进程）中，一次是在新创建的子进程中。在父进程中，fork返回子进程的PID；在子进程中，fork返回0。</p>
+<p>父进程和子进程都是并发运行的独立进程，不能对它们的执行顺序做任何假设。</p>
+<h2 id="逻辑地址-线性地址-物理地址"><a href="#逻辑地址-线性地址-物理地址" class="headerlink" title="逻辑地址 线性地址 物理地址"></a>逻辑地址 线性地址 物理地址</h2><ul>
+<li>逻辑地址（Logical Address）：把用户程序中使用的地址称为相对地址即逻辑地址。一个逻辑地址由两部份组成，段标识符和段内偏移量。例如，你在进行C语言指针编程中，能读取指针变量本身值(&amp;操作)，实际上这个值就是逻辑地址。</li>
+<li>线性地址（Linear Address） 是逻辑地址到物理地址变换之间的中间层。程式代码会产生逻辑地址，或说是段中的偏移地址，加上相应段的基地址就生成了一个线性地址。如果启用了分页机制，那么线性地址能再经变换以产生一个物理地址。若没有启用分页机制，那么线性地址直接就是物理地址。</li>
+<li>物理地址（Physical Address） 是指出目前CPU外部地址总线上的寻址物理内存的地址信号，是地址变换的最终结果地址。</li>
+</ul>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>死锁是指两个或两个以上的进程在执行过程中，由于竞争资源或者由于彼此通信而造成的一种阻塞的现象，若无外力作用，它们都将无法推进下去。</p>
+<p>死锁的发生必须具备以下四个必要条件：</p>
+<ul>
+<li>互斥条件：指进程对所分配到的资源进行排它性使用，即在一段时间内某资源只由一个进程占用。如果此时还有其它进程请求资源，则请求者只能等待，直至占有资源的进程用毕释放。</li>
+<li>请求和保持条件：指进程已经保持至少一个资源，但又提出了新的资源请求，而该资源已被其它进程占有，此时请求进程阻塞，但又对自己已获得的其它资源保持不放。</li>
+<li>不剥夺条件：指进程已获得的资源，在未使用完之前，不能被剥夺，只能在使用完时由自己释放。</li>
+<li>环路等待条件：指在发生死锁时，必然存在一个进程——资源的环形链，即进程集合{P0，P1，P2，···，Pn}中的P0正在等待一个P1占用的资源；P1正在等待P2占用的资源，···，Pn正在等待已被P0占用的资源。</li>
+</ul>
+<p>避免死锁：</p>
+<ul>
+<li>资源一次性分配：（破坏请求和保持条件）</li>
+<li>可剥夺资源：即当某进程新的资源未满足时，释放已占有的资源（破坏不可剥夺条件）</li>
+<li>资源有序分配法：系统给每类资源赋予一个编号，每一个进程按编号递增的顺序请求资源，释放则相反（破坏环路等待条件）</li>
+</ul>
+<p>常用的银行家算法</p>
+<h3 id="线程的状态"><a href="#线程的状态" class="headerlink" title="线程的状态"></a>线程的状态</h3><p>（Java版本）</p>
+<ul>
+<li>新建状态：线程对象已经创建，还没有在其上调用start()方法;</li>
+<li>就绪状态：在就绪状态的进程除CPU之外，其它的运行所需资源都已全部获；</li>
+<li>运行状态：就绪状态的线程获取了CPU，执行程序代码；</li>
+<li>阻塞状态：阻塞状态是线程因为某种原因放弃CPU使用权（等待用户输入、调用sleep()进入睡眠状态、试图得到一个同步锁，而该锁正被其他线程持有），暂时停止运行。直到线程进入就绪状态，才有机会转到运行状态；</li>
+<li>死亡状态：线程执行完了或者因异常退出了run()方法，该线程结束生命周期；</li>
+</ul>
+<h3 id="堆-栈"><a href="#堆-栈" class="headerlink" title="堆 栈"></a>堆 栈</h3><p>栈区：由编译器自动分配释放，存放函数的参数值，局部变量的值等。其操作方式类似于数据结构中的栈。栈空间比较小，windows下一般是2M。<br>堆区：一般由程序员分配释放，若程序员不释放，程序结束时可能由OS回收（不保证）。堆是向高地址扩展的数据结构，是不连续的内存区域。堆的大小受限于计算机系统中有效的虚拟内存<br>全局区（静态区）（static）：全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域。</p>
+<h3 id="Linux线程同步"><a href="#Linux线程同步" class="headerlink" title="Linux线程同步"></a>Linux线程同步</h3><p>互斥锁：也被称为二元信号量，因为它的值总为1或者0。在一个互斥锁上执行P操作称为加锁，执行V操作称为解锁。对一个互斥锁加了锁但是还没有解锁的线程称为占用这个互斥锁。</p>
+<p>读写锁：可以有3种状态，读模式下加锁，写模式下加锁，不加锁状态，一次只可以有一个线程占有写模式下的读写锁，但是可以有多个线程占有读模式下的读写锁。</p>
+<p>条件变量：件变量是利用线程间共享的全局变量进行同步的一种机制，主要包括两个动作：一个线程等待”条件变量的条件成立”而挂起；另一个线程使”条件成立”（给出条件成立信号）。为了防止竞争，条件变量的使用总是和一个互斥锁结合在一起。</p>
+<p>信号量：记录型信号量（record semaphore)：每个信号量s除一个整数值s.value（计数）外，还有一个进程等待队列s.L，其中是阻塞在该信号量的各个进程的标识。</p>
+<p>自旋锁：自旋锁与互斥量类似，但它不是通过休眠使线程阻塞，而是在获取锁之前一直处于忙等阻塞状态，自旋锁可用于以下情况：锁被持有的时间短，而线程并不希望在重新调度上花费太多成本。</p>
+<h3 id="进程空间分布"><a href="#进程空间分布" class="headerlink" title="进程空间分布"></a>进程空间分布</h3><p>由低地址到高地址分别是：</p>
+<ul>
+<li>text：已编译程序的机器代码（二进制文件）</li>
+<li>data：已经初始化的静态变量</li>
+<li>bss：未初始化的静态变量</li>
+<li>堆空间</li>
+<li>内存映射区</li>
+<li>栈空间</li>
+<li>环境变量和命令行参数</li>
+<li>最后是内核空间（32位机器上是1G）</li>
+</ul>
+<h3 id="main-c文件编译过程"><a href="#main-c文件编译过程" class="headerlink" title="main.c文件编译过程"></a>main.c文件编译过程</h3><p>预编译：（生成一个ASCII码的中间文件main.i）</p>
+<ul>
+<li>将所有的#define删除，并且展开所有的宏定义</li>
+<li>处理所有的条件预编译指令，比如#if #ifdef #elif #else #endif等</li>
+<li>处理#include 预编译指令，将被包含的文件插入到该预编译指令的位置。</li>
+<li>删除所有注释 “//”和”/* */”.</li>
+</ul>
+<p>编译：编译过程就是把预处理完的文件进行一系列的词法分析，语法分析，语义分析及优化后生成相应的汇编代码。生成一个ASCII汇编语言文件main.s。</p>
+<p>汇编：将汇编代码转变成机器可以执行的命令，每一个汇编语句几乎都对应一条机器指令。汇编相对于编译过程比较简单，根据汇编指令和机器指令的对照表一一翻译即可。生成一个可重定位目标文件main.o</p>
+<p>链接：运行链接程序，将main.o文件和一些必须的系统目标文件组合起来，生成一个可执行文件。链接器主要有两个任务：</p>
+<ul>
+<li>符号解析symbol resolution：将每个符号引用刚好和一个符号定义连接起来。</li>
+<li>重定位relocation：把每个符号定义和一个存储器位置联系起来。</li>
+</ul>
+<h2 id="静态链接-动态链接"><a href="#静态链接-动态链接" class="headerlink" title="静态链接 动态链接"></a>静态链接 动态链接</h2><p>静态链接就是在编译链接时直接将需要的执行代码拷贝到调用处，优点就是在程序发布的时候就不需要的依赖库，也就是不再需要带着库一块发布，程序可以独立执行，但是体积可能会相对大一些。优点是代码的装载速度快，执行速度也比较快，因为编译时它只会把你需要的那部分链接进去，应用程序相对比较大。但是如果多个应用程序使用的话，会被装载多次，浪费内存。（Linux下是.a文件）</p>
+<p>动态链接就是在编译的时候不直接拷贝可执行代码，而是通过记录一系列符号和参数，在程序运行或加载时将这些信息传递给操作系统，操作系统负责将需要的动态库加载到内存中，然后程序在运行到指定的代码时，去共享执行内存中已经加载的动态库可执行代码，最终达到运行时连接的目的。优点是多个程序可以共享同一段代码，而不需要在磁盘上存储多个拷贝，缺点是由于是运行时加载，可能会影响程序的前期执行性能。（Linux下是.so文件）</p>
+<h2 id="Linux常用命令"><a href="#Linux常用命令" class="headerlink" title="Linux常用命令"></a>Linux常用命令</h2><p>统计当前文件夹下文件的个数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l |grep &quot;^-&quot;|wc -l</span><br></pre></td></tr></table></figure>
+
+<p>统计当前文件夹下目录的个数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l |grep &quot;^d&quot;|wc -l</span><br></pre></td></tr></table></figure>
+
+<p>查看某个端口是否被占用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -anp|grep 80</span><br></pre></td></tr></table></figure>
+
+<p>查找文件中某个字符行数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;error&quot; a.log|wc -l</span><br></pre></td></tr></table></figure>
+
+<p>wc -l统计行数 wc -m统计字符数</p>
+<p>查看所有进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -A</span><br></pre></td></tr></table></figure>
+
+<p>查找大于100M的文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -size +100M</span><br></pre></td></tr></table></figure>
+
+<p>在/etc目录下查找所有的目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /etc -type d</span><br></pre></td></tr></table></figure>
+
+<p>网络分析工具命令：<a href="http://blog.csdn.net/xiaoquantouer/article/details/77132241#3netstat" target="_blank" rel="noopener">http://blog.csdn.net/xiaoquantouer/article/details/77132241#3netstat</a></p>
+<h2 id="符号链接-硬链接"><a href="#符号链接-硬链接" class="headerlink" title="符号链接 硬链接"></a>符号链接 硬链接</h2><p>符号链接又称软链接，路径可以是任意文件或目录，可以链接不同文件系统的文件。（链接文件可以链接不存在的文件，这就产生一般称之为”断链”的现象），链接文件甚至可以循环链接自己（类似于编程中的递归）。一个符号链接文件仅包含有一个文本字符串，其被操作系统解释为一条指向另一个文件或者目录的路径。它是一个独立文件，其存在并不依赖于目标文件。如果删除一个符号链接，它指向的目标文件不受影响。如果目标文件被移动、重命名或者删除，任何指向它的符号链接仍然存在，但是它们将会指向一个不复存在的文件。这种情况被有时被称为被遗弃。</p>
+<p>硬连接是不会建立inode的，他只是在文件原来的inode link count域再增加1而已，也因此硬链接是不可以跨越文件系统的。相反都是软连接会重新建立一个inode，当然inode的结构跟其他的不一样，他只是一个指明源文件的字符串信息。一旦删除源文件，那么软连接将变得毫无意义。而硬链接删除的时候，系统调用会检查inode link count的数值，如果他大于等于1，那么inode不会被回收。因此文件的内容不会被删除。</p>
+<p>硬链接实际上是为文件建一个别名，链接文件和原文件实际上是同一个文件。可以通过ls -i来查看一下，这两个文件的inode号是同一个，说明它们是同一个文件；而软链接建立的是一个指向，即链接文件内的内容是指向原文件的指针，它们是两个文件。</p>
+<p>软链接可以跨文件系统，硬链接不可以；软链接可以对一个不存在的文件名(filename)进行链接（当然此时如果你vi这个软链接文件，linux会自动新建一个文件名为filename的文件）,硬链接不可以（其文件必须存在，inode必须存在）；软链接可以对目录进行连接，硬链接不可以。两种链接都可以通过命令 ln 来创建。ln 默认创建的是硬链接。使用 -s 开关可以创建软链接。</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/OS/" rel="tag"># OS</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/16/what-does-explicit-keyword-mean/" rel="next" title="(译)What does explicit keyword mean?">
+                <i class="fa fa-chevron-left"></i> (译)What does explicit keyword mean?
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程-线程"><span class="nav-number">1.</span> <span class="nav-text">进程 线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多进程-多线程"><span class="nav-number">2.</span> <span class="nav-text">多进程 多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork"><span class="nav-number">2.1.</span> <span class="nav-text">fork()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑地址-线性地址-物理地址"><span class="nav-number">3.</span> <span class="nav-text">逻辑地址 线性地址 物理地址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#死锁"><span class="nav-number">3.1.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程的状态"><span class="nav-number">3.2.</span> <span class="nav-text">线程的状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆-栈"><span class="nav-number">3.3.</span> <span class="nav-text">堆 栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux线程同步"><span class="nav-number">3.4.</span> <span class="nav-text">Linux线程同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程空间分布"><span class="nav-number">3.5.</span> <span class="nav-text">进程空间分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#main-c文件编译过程"><span class="nav-number">3.6.</span> <span class="nav-text">main.c文件编译过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态链接-动态链接"><span class="nav-number">4.</span> <span class="nav-text">静态链接 动态链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux常用命令"><span class="nav-number">5.</span> <span class="nav-text">Linux常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#符号链接-硬链接"><span class="nav-number">6.</span> <span class="nav-text">符号链接 硬链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

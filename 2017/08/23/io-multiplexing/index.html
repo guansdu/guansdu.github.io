@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="想象以下场景：如果我们现在要求服务器既能对客户端的连接请求进行响应">
+<meta name="keywords" content="Networks,Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I&#x2F;O多路复用：select,poll和epoll">
+<meta property="og:url" content="http://yoursite.com/2017/08/23/io-multiplexing/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="想象以下场景：如果我们现在要求服务器既能对客户端的连接请求进行响应">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-09-02T00:20:28.869Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="I&#x2F;O多路复用：select,poll和epoll">
+<meta name="twitter:description" content="想象以下场景：如果我们现在要求服务器既能对客户端的连接请求进行响应">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2017/08/23/io-multiplexing/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>I/O多路复用：select,poll和epoll | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/23/io-multiplexing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">I/O多路复用：select,poll和epoll
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-08-23 09:17:15" itemprop="dateCreated datePublished" datetime="2017-08-23T09:17:15+08:00">2017-08-23</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-09-02 08:20:28" itemprop="dateModified" datetime="2017-09-02T08:20:28+08:00">2017-09-02</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Networks/" itemprop="url" rel="index"><span itemprop="name">Networks</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>想象以下场景：如果我们现在要求服务器既能对客户端的连接请求进行响应<a id="more"></a>，也能对用户从标准输入键入的交互命令做出响应，那么此时我们的服务器应该先等待哪个I/O事件呢？没有哪个选择是理想的，如果我们在accept中等待一个连接请求，那么就不能响应输入的命令，反之，如果等待输入命令，我们就不能响应任何连接请求。</p>
+<p>解决这个问题的一个办法就是I/O多路复用技术，IO多路复用是指内核一旦发现进程指定的一个或者多个IO条件准备读取，它就通知该进程。IO多路复用适用如下场合：</p>
+<ol>
+<li>当客户处理多个描述符时（一般是交互式输入和网络套接口），必须使用I/O复用。</li>
+<li>当一个客户同时处理多个套接口时，这种情况是可能的，但很少出现。</li>
+<li>如果一个TCP服务器既要处理监听套接口，又要处理已连接套接口，一般也要用到I/O复用。</li>
+<li>如果一个服务器即要处理TCP，又要处理UDP，一般要使用I/O复用。</li>
+<li>如果一个服务器要处理多个服务或多个协议，一般要使用I/O复用。</li>
+</ol>
+<h2 id="select"><a href="#select" class="headerlink" title="select"></a>select</h2><p>select函数，要求内核挂起进程，只有在一个或者多个I/O事件发生后，才将控制权返回给应用程序。作为一个例子，我们可以调用select，告知内核仅在下列情况时才返回：</p>
+<ul>
+<li>集合{1,4,5}中的任何描述符准备好读；</li>
+<li>集合{2,7}中的任何描述符准备好写；</li>
+<li>集合{1,4}中任何描述符有异常条件待处理；</li>
+<li>已经经历了10.2秒，超时；</li>
+</ul>
+<p>select函数原型为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> maxfdp1,fd_set *readset,fd_set *writeset,fd_set *exceptset,<span class="keyword">const</span> struct timeval *timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>参数列表解释：</p>
+<ol>
+<li>中间的三个参数readset、writeset和exceptset指定我们要让内核测试读、写和异常条件的描述字。如果对某一个的条件不感兴趣，就可以把它设为空指针；</li>
+<li>maxfdp1参数指定待测试的描述字个数，它的值是待测试的最大描述字加1，描述符0、1、2…maxfdp1-1均将被测试。</li>
+<li>timeout告知内核等待所指定描述字中的任何一个就绪可花多少时间，这个参数有三种可能：第一，若将NULL以形参传入，即不传入时间结构，就是将select置于阻塞状态，一定等到监视文件描述符集合中某个文件描述符发生变化为止；第二，若将时间值设为0秒0毫秒，就变成一个纯粹的非阻塞函数，不管文件描述符是否有变化，都立刻返回继续执行，文件无变化返回0，有变化返回一个正值（也成为轮询polling）；第三，timeout的值大于0，这就是等待的超时时间，即 select在timeout时间内阻塞，超时时间之内有事件到来就返回了，否则在超时后不管怎样一定返回，返回值同上述。</li>
+</ol>
+<p>如何给一个参数指定一个或者多个描述符值？</p>
+<p>select使用的是描述符集fd_set，通常是一个整数数组，每个整数的每一位对应一个描述符，比如32位整数，那么第三个数组的第一个元素对应描述符0<del>31，第二个对应32</del>63，以此类推。具体的实现细节我们目前不关心，可以用一下四个函数对描述符进行操作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *fdset)</span></span>;     <span class="comment">// 用来清除描述集合fdset的全部位</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *fdset)</span></span>;    <span class="comment">// 用来打开描述集合fdset中相关fd的位</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *fdset)</span></span>;    <span class="comment">// 用来清除描述集合set中相关fd的位</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *fdset)</span></span>;    <span class="comment">// 检查集合中指定的fd相关的描述符是否就绪</span></span><br></pre></td></tr></table></figure>
+
+<p>返回值：</p>
+<p>select函数修改指针readset、writeset和exceptset所指向的描述符集，因此这三个参数都是值-结果参数。调用该函数时，我们用<code>FD_SET</code>指定所关心的描述符的值；函数返回后，我们用<code>FD_ISSET</code>来测试fd_set中的描述符。描述符集内任何与未就绪描述符对应的返回值均被清除为0。因此，每次重新调用select函数时，我们都要再次把所有描述符集内关心的位均设置为1。</p>
+<p>该函数返回值表示所有描述符集的已就绪的总位数，若没有任何描述符就绪定时器超时返回0，出错返回-1。</p>
+<p>彻底理解select工作机制：</p>
+<p>下面给出一个基于I/O复用的服务器代码（不能运行，用来讲解原理）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 省略了一部分代码</span></span><br><span class="line">    <span class="keyword">int</span> listenfd, port;</span><br><span class="line">    fd_set read_set, ready_set;</span><br><span class="line">    listenfd = open_listenfd(port);</span><br><span class="line"></span><br><span class="line">    FD_ZERO(&amp;read_set); <span class="comment">/* Clear read set */</span></span><br><span class="line">    FD_SET(STDIN_FILENO, &amp;read_set); <span class="comment">/* Add stdin to read set */</span></span><br><span class="line">    FD_SET(listenfd, &amp;read_set); <span class="comment">/* Add listenfd to read set */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>( ; ; )</span><br><span class="line">    &#123;</span><br><span class="line">        ready_set = read_set;</span><br><span class="line">        select(listenfd+<span class="number">1</span>, &amp;ready_set, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="comment">// 注意这里没有轮询判断，因为我们作为例子，只有两个两个描述符</span></span><br><span class="line">        <span class="comment">// 实际情况下，当描述符集中有很多已连接的描述符时，我们是需要用循环判断的。</span></span><br><span class="line">        <span class="keyword">if</span> (FD_ISSET(STDIN_FILENO, &amp;ready_set))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// do something</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (FD_ISSET(listenfd, &amp;ready_set))</span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// do something</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码中<code>open_listenfd</code>用来打开一个监听描述符listenfd（对应socket，bind和listened），接下来用<code>FD_SET</code>创建一个空的描述符集：</p>
+<blockquote>
+<pre><code>  index:     3  2  1  0
+            ------------
+read_set{∅}: 0  0  0  0</code></pre></blockquote>
+<p>接下来我们用<code>FD_SET</code>设置了由监听描述符listenfd（对应index 3）和标准输入<code>STDIN_FILENO</code>描述符（对应index 0）组成的集合：</p>
+<blockquote>
+<pre><code>  index:       3  2  1  0
+              ------------
+read_set{0,3}: 1  0  0  1</code></pre></blockquote>
+<p>接下来服务器开始了典型的循环，但是我们不再调用accept函数来等待一个连接请求的到来，而是调用select函数，这个函数会一直阻塞，直达监听描述符或者标准输入准备好可以读。比如，下面用户按下回车键，使得标准输入变得可以读，这个时候select函数返回ready_set的值：</p>
+<blockquote>
+<pre><code>  index:       3  2  1  0
+              ------------
+ready_set{0}:  0  0  0  1</code></pre></blockquote>
+<p>一旦select返回，我们就可以用FD_ISSET宏指令来判断哪个描述符准备好了，然后做出不同的响应。</p>
+<p>select缺点：</p>
+<ol>
+<li>有最大描述符限制，<code>FD_SETSIZE</code>一般为1024。</li>
+<li>对socket进行扫描时是线性扫描，即采用轮询的方法，效率较低。</li>
+<li>需要维护一个用来存放大量fd_set的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。</li>
+</ol>
+<h2 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h2><p>函数原型为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">poll</span> <span class="params">(struct pollfd *fds, <span class="keyword">unsigned</span> <span class="keyword">int</span> nfds, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是指向一个结构体数组的第一个元素的指针。每个数组元素都是一个pollfd结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> fd; <span class="comment">/* file descriptor */</span></span><br><span class="line">    <span class="keyword">short</span> events; <span class="comment">/* requested events to watch */</span></span><br><span class="line">    <span class="keyword">short</span> revents; <span class="comment">/* returned events witnessed */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>pollfd结构中要测试的条件由的events指定，函数在相应的revents成员中返回该描述符的状态（一个为调用值，一个为返回结果）。不再使用select“参数-值”传递的方式。</p>
+<p>poll不再有最大描述符限制，但是仍然有select的第二和第三个缺点。</p>
+<p>我们可以看到select和poll都需要在返回后，通过遍历文件描述符来获取已经就绪的socket。事实上，同时连接的大量客户端在一时刻可能只有很少的处于就绪状态，因此随着监视的描述符数量的增长，其效率也会线性下降。</p>
+<h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><p>epoll是Linux内核为处理大批量文件描述符而作了改进的poll，是Linux下多路复用IO接口select/poll的增强版本，它能显著提高程序在大量并发连接中只有少量活跃的情况下的系统CPU利用率。另一点原因就是获取事件的时候，它无须遍历整个被侦听的描述符集，只要遍历那些被内核IO事件异步唤醒而加入Ready队列的描述符集合就行了。epoll除了提供select/poll那种IO事件的水平触发（Level Triggered）外，还提供了边缘触发（Edge Triggered），这就使得用户空间程序有可能缓存IO状态，减少<code>epoll_wait</code>的调用，提高应用程序效率。</p>
+<p>epoll提供了三个函数，<code>epoll_create</code>,<code>epoll_ctl</code>和<code>epoll_wait</code>，<code>epoll_create</code>是创建一个epoll句柄；<code>epoll_ctl</code>是注册要监听的事件类型；<code>epoll_wait</code>则是等待事件的产生。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> size)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd, struct epoll_event *event)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event * events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>彻底理解epoll优点：</p>
+<h3 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h3><p>无论是select,poll还是epoll都需要内核把FD消息通知给用户空间，为了避免不必要的内存拷贝，epoll是通过内核与用户空间mmap同一块内存实现的（共享内存），使得使得这块物理内存对内核和对用户均可见。epoll保证了每个fd在整个过程中只会拷贝一次。</p>
+<h3 id="不需轮询判断"><a href="#不需轮询判断" class="headerlink" title="不需轮询判断"></a>不需轮询判断</h3><p>epoll的解决方案不像select或poll一样每次都把current轮流加入fd对应的设备等待队列中，而只在<code>epoll_ctl</code>时把current挂一遍（这一遍必不可少）并为每个fd指定一个回调函数，当设备就绪，唤醒等待队列上的等待者时，就会调用这个回调函数，而这个回调函数会把就绪的fd加入一个就绪链表）。<code>epoll_wait</code>的工作实际上就是在这个就绪链表中查看有没有就绪的fd（利用schedule_timeout()实现睡一会，判断一会的效果）。</p>
+<h3 id="描述符没有数量上限"><a href="#描述符没有数量上限" class="headerlink" title="描述符没有数量上限"></a>描述符没有数量上限</h3><p>所支持的FD上限是最大可以打开文件的数目，这个数字一般远大于2048,举个例子，在1GB内存的机器上大约是10万左右。</p>
+<h3 id="IO效率不随FD数目增加而线性下降"><a href="#IO效率不随FD数目增加而线性下降" class="headerlink" title="IO效率不随FD数目增加而线性下降"></a>IO效率不随FD数目增加而线性下降</h3><p>传统的select/poll另一个致命弱点就是当你拥有一个很大的socket集合，不过由于网络延时，任一时间只有部分的socket是“活跃”的，但是select/poll每次调用都会线性扫描全部的集合，导致效率呈现线性下降。但是epoll不存在这个问题，它只会对“活跃”的socket进行操作–这是因为在内核实现中epoll是根据每个fd上面的callback函数实现的。只有“活跃”的socket才会主动的去调用 callback函数，其他idle状态socket则不会。</p>
+<p><strong>红黑树</strong>将存储epoll所监听的套接字描述符。epoll在实现上采用红黑树去存储所有套接字描述符，当添加或者删除一个套接字时（epoll_ctl），都在红黑树上去处理，红黑树本身插入和删除性能比较好，时间复杂度O(logN)。</p>
+<h3 id="工作方式"><a href="#工作方式" class="headerlink" title="工作方式"></a>工作方式</h3><p>epoll有2种工作方式：LT和ET：</p>
+<p>LT（level triggered）水平触发，是缺省的工作方式，并且同时支持block和no-block socket.在这种做法中，内核告诉你一个文件描述符是否就绪了，然后你可以对这个就绪的fd进行IO操作。如果你不作任何操作，内核还是会继续通知你的，所以，这种模式编程出错误可能性要小一点。传统的select/poll都是这种模型的代表。</p>
+<p>ET （edge-triggered）边缘触发，是高速工作方式，只支持non-block socket。在这种模式下，当描述符从未就绪变为就绪时，内核通过epoll告诉你。然后它会假设你知道文件描述符已经就绪，并且不会再为那个文件描述符发送更多的就绪通知，直到你做了某些操作导致那个文件描述符不再为就绪状态了（比如，你在发送，接收或者接收请求，或者发送接收的数据少于一定量时导致了一个EWOULDBLOCK 错误）。但是请注意，如果一直不对这个fd作IO操作（从而导致它再次变成未就绪），内核不会发送更多的通知（only once）。</p>
+<p>参考资料：</p>
+<ol>
+<li>CSAPP 第12章</li>
+<li>UNP 第6章</li>
+</ol>
+<p>更权威的,请参阅Linux Programmer’s Manual:</p>
+<ul>
+<li><a href="http://www.man7.org/linux/man-pages/man2/select.2.html" target="_blank" rel="noopener">http://www.man7.org/linux/man-pages/man2/select.2.html</a></li>
+<li><a href="http://www.man7.org/linux/man-pages/man2/poll.2.html" target="_blank" rel="noopener">http://www.man7.org/linux/man-pages/man2/poll.2.html</a></li>
+<li><a href="http://www.man7.org/linux/man-pages/man7/epoll.7.html" target="_blank" rel="noopener">http://www.man7.org/linux/man-pages/man7/epoll.7.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/Networks/" rel="tag"># Networks</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/22/leetcode-trie-tree/" rel="next" title="理解Trie树">
+                <i class="fa fa-chevron-left"></i> 理解Trie树
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/24/cpp-object-model-constructors/" rel="prev" title="C++对象模型之constructors">
+                C++对象模型之constructors <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#select"><span class="nav-number">1.</span> <span class="nav-text">select</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll"><span class="nav-number">2.</span> <span class="nav-text">poll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll"><span class="nav-number">3.</span> <span class="nav-text">epoll</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mmap"><span class="nav-number">3.1.</span> <span class="nav-text">mmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不需轮询判断"><span class="nav-number">3.2.</span> <span class="nav-text">不需轮询判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#描述符没有数量上限"><span class="nav-number">3.3.</span> <span class="nav-text">描述符没有数量上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO效率不随FD数目增加而线性下降"><span class="nav-number">3.4.</span> <span class="nav-text">IO效率不随FD数目增加而线性下降</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作方式"><span class="nav-number">3.5.</span> <span class="nav-text">工作方式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

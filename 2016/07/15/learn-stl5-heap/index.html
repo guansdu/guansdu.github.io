@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="heap并不是STL的容器组件，它扮演幕后英雄的角色，">
+<meta name="keywords" content="C++,STL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STL源码剖析-学习笔记（五）:heap">
+<meta property="og:url" content="http://yoursite.com/2016/07/15/learn-stl5-heap/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="heap并不是STL的容器组件，它扮演幕后英雄的角色，">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-heap%2Fheap1.png">
+<meta property="og:updated_time" content="2017-04-10T08:39:28.320Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="STL源码剖析-学习笔记（五）:heap">
+<meta name="twitter:description" content="heap并不是STL的容器组件，它扮演幕后英雄的角色，">
+<meta name="twitter:image" content="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-heap%2Fheap1.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/07/15/learn-stl5-heap/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>STL源码剖析-学习笔记（五）:heap | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/15/learn-stl5-heap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">STL源码剖析-学习笔记（五）:heap
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-07-15 09:16:02" itemprop="dateCreated datePublished" datetime="2016-07-15T09:16:02+08:00">2016-07-15</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-04-10 16:39:28" itemprop="dateModified" datetime="2017-04-10T16:39:28+08:00">2017-04-10</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/STL/" itemprop="url" rel="index"><span itemprop="name">STL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>heap并不是STL的容器组件，它扮演幕后英雄的角色，<a id="more"></a>为priority queue提供支持。顾名思义，priority queue就是（最大）优先级队列，允许用户以任意的顺序把元素（push）放入容器中，但是进行（pop）出队操作时，按照元素优先级最大的，排在最前面，在第一个弹出。</p>
+<h2 id="heap概述"><a href="#heap概述" class="headerlink" title="heap概述"></a>heap概述</h2><p>heap是一种完全二叉树（complete binary tree），也就是说,只有最下面两层结点的度能小于2，并且最底层的叶结点由左到右不得有空隙。</p>
+<p><img src="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-heap%2Fheap1.png" alt="一个完全二叉树以及其数组表示"><br>根据heap的特性，在STL中用vector了存储所有的结点 ；若将vector的第0的元素保留，已知某个结点位于vector的i处，那么可以知道其父结点下标为<code>parent(i) = i/2</code>，左子结点下标为<code>left(i) = 2i</code>，右子结点下标为<code>right(i) = 2i+1</code>。（’/‘表示高斯符号，取不超过i/2的最大整数）</p>
+<p>heap分为max-heap和min-heap。在STL中提供的是max-heap，所以本篇文章也是讲的max-heap。max-heap是指每个结点的键值（key）都大于等于其子结点的键值，因此，max-heap的最大值位于根结点，也就是在vector的起头处。</p>
+<h2 id="heap算法"><a href="#heap算法" class="headerlink" title="heap算法"></a>heap算法</h2><h3 id="push-heap"><a href="#push-heap" class="headerlink" title="push_heap"></a>push_heap</h3><p>新加入一个结点。先放在最底层最右叶结点，也就是放在vector的<code>end()-1</code>处，然后为了保持max-heap的性质，执行一个percolate up（上溯）的过程：将新结点与父结点比较，如果大于父结点的键值，就与父结点交换位置，如此反复，直到不需要交换或者根结点为止。</p>
+<h3 id="pop-heap"><a href="#pop-heap" class="headerlink" title="pop_heap"></a>pop_heap</h3><p>取出根结点，也就是最大值所在的结点（实际上STL只是将它移到了vector的尾部）。为了保持max-heap的性质，必须割舍掉最底层最右边的叶结点，并将其重新安插至合适的位置，执行一个percolate down（下溯）的过程：从根节点开始将空洞节点（一开始是根节点）和较大子节点交换，并持续向下进行，直到到达叶节点为止。然后将被割舍的元素值赋给“已到达叶结点的空洞结点”，并再执行一次percolate up过程。</p>
+<h3 id="sort-heap"><a href="#sort-heap" class="headerlink" title="sort_heap"></a>sort_heap</h3><p>每次pop_heap都将最大值放到了vector的末尾，我们可以持续对整个heap做pop_heap操作，每次将操作范围从后向前缩小一个元素，这样我们便可以得到一个递增序列。</p>
+<h3 id="make-heap"><a href="#make-heap" class="headerlink" title="make_heap"></a>make_heap</h3><p>将一个已有的vector数据转化为一个heap，就是从第i个元素开始（<code>i = vector.size()/2 ; i&gt;=0 ; i--</code>）不断调整结点顺序使其满足heap的性质。</p>
+<h2 id="heap实现"><a href="#heap实现" class="headerlink" title="heap实现"></a>heap实现</h2><p>我对书中给的源码稍作修改使之简洁一些，注释也已经很详尽了，大家应该都能看懂，可以自己运行测试。分为两个文件一个是<code>my_heap.h</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//author:Klaus</span></span><br><span class="line"><span class="comment">//time:2016/7/15</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _MY_HEAP_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>  _MY_HEAP_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stddef.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MakeHeap</span><span class="params">(<span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator first, <span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator last)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//长度为0或者1时，不需要任何操作</span></span><br><span class="line">	<span class="keyword">if</span> (last - first &lt; <span class="number">2</span>)</span><br><span class="line">		<span class="keyword">return</span> ;</span><br><span class="line">	<span class="comment">//待建堆的元素个数</span></span><br><span class="line">	<span class="keyword">ptrdiff_t</span> len = last - first;</span><br><span class="line">	<span class="comment">//只需要对非叶子结点进行重排即可，找到最后一个非叶子结点</span></span><br><span class="line">	<span class="comment">//这里下标从0开始，所以最后一个非叶子结点下标为(len-2)/2</span></span><br><span class="line">	<span class="comment">//注意：vector的范围是[first,last)，半闭半开区间，所以这里不是(len-1)/2</span></span><br><span class="line">	<span class="keyword">ptrdiff_t</span> parent = (len - <span class="number">2</span>) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		AdjustHeap&lt;T&gt;(first, parent, len, T(*(first + parent)));</span><br><span class="line">		<span class="keyword">if</span> (parent == <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		parent--;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PushHeap</span><span class="params">(<span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator first, <span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator last)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//新插入的值已经放入了vector的尾部，则初始空洞结点就是vector的尾端元素</span></span><br><span class="line">	<span class="comment">//topIndex为根结点的下标，这里设置为0</span></span><br><span class="line">	_PushHeap&lt;T&gt;( first, <span class="keyword">ptrdiff_t</span>((last - first) - <span class="number">1</span>), <span class="number">0</span>, T(*(last - <span class="number">1</span>)) );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">void</span> _PushHeap(<span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator first, <span class="keyword">ptrdiff_t</span> holeIndex, <span class="keyword">ptrdiff_t</span> topIndex, T value)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//找到空洞元素的父结点</span></span><br><span class="line">	<span class="keyword">ptrdiff_t</span> parent = (holeIndex <span class="number">-1</span>) / <span class="number">2</span>;</span><br><span class="line">	<span class="comment">//未到达根结点，且父结点的值小于value</span></span><br><span class="line">	<span class="keyword">while</span> (holeIndex &gt; topIndex &amp;&amp; *(first + parent) &lt; value)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//把父结点的值赋给空洞结点</span></span><br><span class="line">		*(first + holeIndex) = *(first + parent);</span><br><span class="line">		<span class="comment">//设置新的空洞结点</span></span><br><span class="line">		holeIndex = parent;</span><br><span class="line">		<span class="comment">//新的空洞结点的父结点</span></span><br><span class="line">		parent = (holeIndex - <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	*(first + holeIndex) = value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PopHeap</span><span class="params">(<span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator first, <span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator last)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//value用来保存尾结点的值</span></span><br><span class="line">	T value = T(*(last<span class="number">-1</span>));</span><br><span class="line">	<span class="comment">//将尾结点的值设置为首结点的值，这样我们就可以用pop_back操作取出</span></span><br><span class="line">	*(last<span class="number">-1</span>) = *first;</span><br><span class="line">	<span class="comment">//第二个参数ptrdiff_t holeIndex：初始空洞结点就是0，即为根结点；</span></span><br><span class="line">	<span class="comment">//第三个参数ptrdiff_t len：对区域[first,last-1)进行调整，使之符合堆的性质</span></span><br><span class="line">	AdjustHeap&lt;T&gt;(first, <span class="number">0</span>, <span class="keyword">ptrdiff_t</span>(last - first - <span class="number">1</span>), value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AdjustHeap</span><span class="params">(<span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator first, <span class="keyword">ptrdiff_t</span> holeIndex, <span class="keyword">ptrdiff_t</span> len, T value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//保存根结点的下标</span></span><br><span class="line">	<span class="keyword">ptrdiff_t</span> topIndex = holeIndex;</span><br><span class="line">	<span class="comment">//初始为空洞结点的右子结点</span></span><br><span class="line">	<span class="keyword">ptrdiff_t</span> bigChild = <span class="number">2</span>*holeIndex+<span class="number">2</span>;</span><br><span class="line">	<span class="keyword">while</span> (bigChild &lt; len)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//比较空洞结点左右子大小，使之成为较大的子结点</span></span><br><span class="line">		<span class="keyword">if</span> (*(first + bigChild) &lt; *(first + bigChild - <span class="number">1</span>))</span><br><span class="line">			bigChild--;</span><br><span class="line">		<span class="comment">//把大的子结点赋值给空洞结点</span></span><br><span class="line">		*(first + holeIndex) = *(first + bigChild);</span><br><span class="line">		holeIndex = bigChild;</span><br><span class="line">		<span class="comment">//为新空洞结点的右子结点</span></span><br><span class="line">		bigChild = <span class="number">2</span> * holeIndex + <span class="number">2</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (bigChild == len)</span><br><span class="line">	&#123;</span><br><span class="line">		*(first + holeIndex) = *(first + bigChild - <span class="number">1</span>);</span><br><span class="line">		holeIndex = bigChild - <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//这里直接用*(first+holeIndex) = value是不正确的，侯捷的书中有误。</span></span><br><span class="line">	<span class="comment">//注意：最后将value放在最后的空洞结点位置时，要再执行一次percolate up上溯操作</span></span><br><span class="line">	<span class="comment">//因为直接赋值后可能不满足堆的性质。</span></span><br><span class="line">	_PushHeap&lt;T&gt;(first, holeIndex, topIndex, value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SortHeap</span><span class="params">(<span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator first, <span class="keyword">typename</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;::iterator last)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//第一次执行PopHeap，最大值就被放在vector的尾端</span></span><br><span class="line">	<span class="comment">//扣除尾端再执行一次PopHeap，次大值又被放在尾端</span></span><br><span class="line">	<span class="comment">//如此反复，即可得到递增序列</span></span><br><span class="line">	<span class="keyword">while</span> (last - first &gt; <span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		PopHeap&lt;T&gt;(first, last--);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//_MY_HEAP_H</span></span></span><br></pre></td></tr></table></figure>
+
+<p>一个是<code>stl_heap.cpp</code>用于测试：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"my_heap.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> ia[<span class="number">9</span>] = &#123;<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">3</span>,<span class="number">5</span>&#125;;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; ve(ia, ia+<span class="number">9</span>);</span><br><span class="line">	MakeHeap&lt;<span class="keyword">int</span>&gt; (ve.begin(), ve.end());</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ve.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; ve[i] &lt;&lt; <span class="string">" "</span>;    <span class="comment">//9  5 8 3 4 0 2 3 1</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	ve.push_back(<span class="number">7</span>);</span><br><span class="line">	PushHeap&lt;<span class="keyword">int</span>&gt;(ve.begin(), ve.end());</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ve.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; ve[i] &lt;&lt; <span class="string">" "</span>;    <span class="comment">//9 7 8 3 5 0 2 3 1 4</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	PopHeap&lt;<span class="keyword">int</span>&gt; (ve.begin(), ve.end());</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ve.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; ve[i] &lt;&lt; <span class="string">" "</span>;    <span class="comment">//8 7 4 3 5 0 2 3 1 9</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	ve.pop_back();    <span class="comment">//remove 9</span></span><br><span class="line">	SortHeap&lt;<span class="keyword">int</span>&gt;(ve.begin(), ve.end());</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ve.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; ve[i] &lt;&lt; <span class="string">" "</span>;    <span class="comment">//0 1 2 3 3 4 5 7 8</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码我放在github上了，下载地址：<a href="https://github.com/guansdu/Learning-STL/tree/master/heap" target="_blank" rel="noopener">learn-stl-heap</a>。</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/STL/" rel="tag"># STL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/11/learn-stl4-vector/" rel="next" title="STL源码剖析-学习笔记（四）:vector">
+                <i class="fa fa-chevron-left"></i> STL源码剖析-学习笔记（四）:vector
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/21/learn-stl6-list/" rel="prev" title="STL源码剖析-学习笔记（六）:list">
+                STL源码剖析-学习笔记（六）:list <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#heap概述"><span class="nav-number">1.</span> <span class="nav-text">heap概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#heap算法"><span class="nav-number">2.</span> <span class="nav-text">heap算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#push-heap"><span class="nav-number">2.1.</span> <span class="nav-text">push_heap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pop-heap"><span class="nav-number">2.2.</span> <span class="nav-text">pop_heap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sort-heap"><span class="nav-number">2.3.</span> <span class="nav-text">sort_heap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#make-heap"><span class="nav-number">2.4.</span> <span class="nav-text">make_heap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#heap实现"><span class="nav-number">3.</span> <span class="nav-text">heap实现</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

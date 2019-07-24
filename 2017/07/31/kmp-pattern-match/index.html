@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="在文本编辑器（Word，记事本）里面，我们常常需要在某一段文本中找出某个模式">
+<meta name="keywords" content="Algorithm,KMP,String Match">
+<meta property="og:type" content="article">
+<meta property="og:title" content="详解KMP字符串匹配算法">
+<meta property="og:url" content="http://yoursite.com/2017/07/31/kmp-pattern-match/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="在文本编辑器（Word，记事本）里面，我们常常需要在某一段文本中找出某个模式">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://7xv63n.com1.z0.glb.clouddn.com/string-match-kmp/kmp1.png">
+<meta property="og:updated_time" content="2019-07-20T09:12:17.255Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="详解KMP字符串匹配算法">
+<meta name="twitter:description" content="在文本编辑器（Word，记事本）里面，我们常常需要在某一段文本中找出某个模式">
+<meta name="twitter:image" content="http://7xv63n.com1.z0.glb.clouddn.com/string-match-kmp/kmp1.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2017/07/31/kmp-pattern-match/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>详解KMP字符串匹配算法 | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/31/kmp-pattern-match/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">详解KMP字符串匹配算法
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-07-31 11:08:31" itemprop="dateCreated datePublished" datetime="2017-07-31T11:08:31+08:00">2017-07-31</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-07-20 17:12:17" itemprop="dateModified" datetime="2019-07-20T17:12:17+08:00">2019-07-20</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Algorithm/" itemprop="url" rel="index"><span itemprop="name">Algorithm</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在文本编辑器（Word，记事本）里面，我们常常需要在某一段文本中找出某个模式<a id="more"></a>的全部出现位置，比如在英文文章中找出单词<code>farewell</code>的出现次数等等。使用一种好的字符串匹配算法能大大提高搜索所需要的时间。本篇博客就来介绍一个能在线性时间解决字符串搜索问题的算法。</p>
+<p>首先我们定义字符串匹配问题：假定文本是一个长度为n的数组T[1..n]，模式（待搜索字符串）是一个长度为m&lt;=n的数组P[1..m]。对于<code>0 &lt;= s &lt;= n-m</code>，有<code>T[s+1..s+m] = P[1..m]</code>，我们就认为模式P在文本T中出现且位移为s。</p>
+<blockquote>
+<pre><code>T : a b c a b a a
+P :----&gt;c a b
+       s</code></pre></blockquote>
+<p>如上图所示，我们认为s=2就是一个有效位移。</p>
+<h2 id="朴素字符串匹配算法"><a href="#朴素字符串匹配算法" class="headerlink" title="朴素字符串匹配算法"></a>朴素字符串匹配算法</h2><p>考虑朴素的字符串匹配算法，它用一个循环来找出所有的位移，该循环对n-m+1个可能的每个s检查条件<code>T[s+1..s+m]=P[1..m]</code>是否满足，伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Naive-String-Matcher</span><br><span class="line"></span><br><span class="line">n = Length(T)</span><br><span class="line">m = Length(P)</span><br><span class="line">for s = 0 : n - m</span><br><span class="line">    check if (T[s+1..s+m] == P[1..m])</span><br><span class="line">        record s</span><br></pre></td></tr></table></figure>
+
+<p>Naive String Matcher的运行时间为O(m(n-m+1))，它在发现T和P某一位匹配不成功以后，又会立即从T的下一位对P从头开始匹配，这样的效率是很底下的，因为它忽略了匹配过程中获得的一些信息，而这些信息可能是非常有用的。比如P=aaab，如果T=aaabcaaab，我们发现位移s=0是有效的，那么位移s=1,2,3都不是有效的，因为T[4]=b。</p>
+<h2 id="KMP匹配算法"><a href="#KMP匹配算法" class="headerlink" title="KMP匹配算法"></a>KMP匹配算法</h2><p>KMP算法是由Knuth、Morris和Pratt三人共同设计的，它的运行时间为O(n)，需要额外空间O(m)，也就是数组π[1..m]，它是事先根据模式P计算出来的，用来辅助我们进行字符串匹配。</p>
+<p>在理解KMP算法过程之前，我们要知道几个概念：</p>
+<ul>
+<li>前缀：若对于某个字符有x=wy（x,y不为空），我们就称字符串w是字符串x的前缀，比如abca的前缀有{∅, a, ab, abc, abca}；</li>
+<li>后缀：若对于某个字符有x=yw（x,y不为空），我们就称字符串w是字符串x的后缀，比如abca的后缀有{∅, a, ca, bca, abca}；</li>
+<li>真前缀：不包括自身的前缀；</li>
+<li>真后缀：不包括自身的后缀；</li>
+</ul>
+<p>不管是算法导论（第二版）上的讲解或者是网上博客都把KMP分为两步，第一个是计算这个辅助数组，算法导论上称为模式的前缀函数π，网上的博客称为next数组；第二步是利用辅助数组进行匹配。</p>
+<h3 id="Prefix-Function"><a href="#Prefix-Function" class="headerlink" title="Prefix Function"></a>Prefix Function</h3><p>本文以算法导论的命名方式来，模式的前缀函数π（prefix function）包含了模式与其自身的位移进行匹配的信息。可以把这些信息用于朴素字符串匹配算法中，避免对无效位移进行测试。</p>
+<p>对模式P[1..m]，我们定义前缀函数π[i]为子串P[1..i]的<strong>真后缀</strong>的最长前缀的长度（1&lt;=i&lt;=n）。是不是很拗口，别急，我举个例子你就明白了，对于字符串<code>&quot;ababa&quot;</code>，它的真后缀有{a,ba,aba,baba,∅}，它的前缀有{a,aba,abab}，它的真后缀的最长前缀为<code>&quot;aba&quot;</code>，所以这里可得π[5]=3。（很多博客这里就没有讲清楚，所以大家就没看明白）还不懂的可看下图：</p>
+<blockquote>
+<pre><code>1 2 3 4 5     ....字符串下标
+a b a b a     ....
+    a b a b a ....π[5] = 3
+    1 2 3 4 5 ....字符串下标</code></pre></blockquote>
+<p>下面讨论如何求解模式P的前缀函数π[1..n]，假设我们现在已经求得了π[0]，π[1]，···，π[i-1]，那么如何求解π[i]呢？如果P[π[i-1]+1]=P[i]相等，那么π[i]=π[i-1]+1；如果不相等，则要进行回溯，具体是如何进行呢，我稍后解释，先看算法导论上的伪代码，我再逐行解释：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Compute-Prefix-Function(P)</span><br><span class="line">m = Length(P)</span><br><span class="line">π[1] = 0</span><br><span class="line">k = 0</span><br><span class="line">for q = 2 : m</span><br><span class="line">    while k &gt; 0 &amp;&amp; P[k+1] != P[q]</span><br><span class="line">        k = π[k]</span><br><span class="line">    if P[k+1] == P[q]</span><br><span class="line">        k = k + 1</span><br><span class="line">    π[q] = k</span><br><span class="line">return π</span><br></pre></td></tr></table></figure>
+
+<p>代码第二行，根据定义单个字符π[1]=0，没有问题；</p>
+<p>结合一个例子我们来分析，若P[1..n]=”ababababca”，n=10，我们先不看代码，可以根据定义求出π数组如下：</p>
+<blockquote>
+<pre><code>i     1 2 3 4 5 6 7 8 9 10
+P[i]  a b a b a b a b c a
+π[i]  0 0 1 2 3 4 5 6 0 1</code></pre></blockquote>
+<p>计算过程如下：</p>
+<ul>
+<li>i=1，p[1]=”a”，显然π[1]=0；</li>
+<li>i=2，p[2]=”ab”，真后缀与前缀没有相同的，π[2]=0；</li>
+<li>i=3，p[2]=”aba”，真后缀与前缀最长的字符串为”a”，所以π[3]=1；</li>
+<li>i=4，p[2]=”abab”，真后缀与前缀最长的字符串为”ab”，所以π[4]=2；</li>
+<li>i =  …</li>
+</ul>
+<p>我们注意到，这么计算难免过于繁琐，每次都要求出真后缀和前缀，能不能简单一点呢？当然能，我们若得到了π[i-1]=k，那么我们知道在模式P[1..i-1]中有子串P[1..k]和P[i-k..i-1]是相等的，现在要求出P[1..i]的π[i]，如果P[k+1]处的字符与P[i]处的相等，那么我们知道子串P[1..k+1]和P[i-k..i]也是肯定相等的。</p>
+<p>举个例子，对上面的字符我们已知P[1..4]=”abab”对于的π[4]=2，就是说子串P[1..2]等于P[3..4]，现在要求π[5]，怎么求呢？我们发现字符P[π[4]]=P[2]和字符P[5]相等都为’a’，那么显然有P[1..3]等于P[3..5]，即π[5]=2+1=3。</p>
+<p>这也就是对程序8-9行的解释。k的值始终是前一个子串（P[1..q-1]）的真后缀的最长前缀的长度。</p>
+<p>那么更严峻的问题来了，如果不相等呢？也就是说P[k+1]不等于P[i]了，那么我们现在当然要进行往回探测，看代码中我们是直接回到π[k]处，这是为什么呢？按道理来说我们应该是依次回到k，k-1，···，1，这样的顺序。</p>
+<p><img src="http://7xv63n.com1.z0.glb.clouddn.com/string-match-kmp/kmp1.png" alt="kmp-prefix-function"></p>
+<p>如上图所示，假设我们要退回到k处，注意已知条件，我们现在有π[i-1]=k，即P[1..k]=P[i-k..i-1]，由于P[i]!=P[k+1]，我们要检查P[1..k]与P[i-K+1..i]是否相等，这就是相当于检查P[1..k]中第一个字符是否等于第二个字符，第二个字符是否等于第三个字符，···。除非P[1..k]中所有的的字符都相等，否则是不能成立的，因此我们还不如直接退回到π[k]（表示字符P[1..π[k]]的真后缀的最长前缀的长度）处，<strong>因为我们总能保证P[1..π[k]]与P[i-π[k]..i-1]相等</strong>。（不明白的想一想π[k]的定义）</p>
+<p>好了，上面就是程序6-7行的解释了，至此我们求解辅助函数完成，接下来匹配就稍微easy些了。</p>
+<h3 id="KMP-Match"><a href="#KMP-Match" class="headerlink" title="KMP Match"></a>KMP Match</h3><p>读懂了前缀函数的求解方法，我们就已经克服了最困难的部分，接下来一鼓作气，看看匹配的过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">KMP-Matcher(T, P)</span><br><span class="line">n = Length(T)</span><br><span class="line">m = Length(P)</span><br><span class="line">π[1..m] = Compute-Prefix-Function(P)</span><br><span class="line"></span><br><span class="line">q = 0</span><br><span class="line">for i = 1 : n</span><br><span class="line">    while q &gt; 0 &amp;&amp; P[q + 1] != T[i]</span><br><span class="line">        q = π[q]</span><br><span class="line">    if P[q + 1] == T[i]</span><br><span class="line">        q = q + 1</span><br><span class="line">    if q == m</span><br><span class="line">        record (shift) s = i - m</span><br><span class="line">        q = π[q]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到程序中在文本T上的下标i是永不回退的，只有在模式P上的下标q会回退。</p>
+<p>如果大家对第8-9行还有点模糊的话，我在这里再啰嗦的解释一下，看下面的例子：</p>
+<blockquote>
+<pre><code>T ... c b a b a b a a b c...
+      | | | | | ~
+P     a b a b a c a</code></pre></blockquote>
+<p>当进行到某一位置使T[i]!=P[5+1]，这就发生了程序第8-9行的情形，这是我们就根据计算的π[5]=3的值，因为π[5]的值表示了P[1..3]和P[3..5]是相等字符，这也是我们计算π的意义所在，把指针q往回退到3处：</p>
+<blockquote>
+<pre><code>T ... c b a b a b a a b c...
+          | | |
+P         a b a b a c a</code></pre></blockquote>
+<p>然后继续对P[q+1]和T[i]进行匹配。</p>
+<p>呼<del>~</del>终于写完了，也是花了我2天才理解透这个算法，若有不对的地方，欢迎大家拍砖指正。</p>
+<hr>
+<p>2017.08.20更新</p>
+<p>附上C++实现代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// author: Klaus</span></span><br><span class="line"><span class="comment">// using KMP string match.</span></span><br><span class="line"><span class="comment">// find the first occurrence position of string "str" in string "t".</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kmp</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; t, <span class="keyword">const</span> <span class="built_in">string</span>&amp; str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = t.length();</span><br><span class="line">    <span class="keyword">int</span> m = str.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt; m)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; pre(m, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; m; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (k &gt; <span class="number">0</span> &amp;&amp; str[k] != str[i])</span><br><span class="line">            k = pre[k];</span><br><span class="line">        <span class="keyword">if</span> (str[i] == str[k])</span><br><span class="line">            k += <span class="number">1</span>;</span><br><span class="line">        pre[i] = k;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> q = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (q &gt; <span class="number">0</span> &amp;&amp; t[i] != str[q])</span><br><span class="line">            q = pre[q];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (t[i] == str[q])</span><br><span class="line">            q += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (q == m)</span><br><span class="line">            <span class="keyword">return</span> i - m + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考资料</p>
+<ul>
+<li>Introduction to Algorithms-2ed edition.</li>
+<li><a href="http://blog.csdn.net/fightlei/article/details/52712461" target="_blank" rel="noopener">详细解读KMP模式匹配算法 - ZhangLei的博客</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm" target="_blank" rel="noopener">Knuth–Morris–Pratt algorithm - Wikipedia</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+          
+            <a href="/tags/KMP/" rel="tag"># KMP</a>
+          
+            <a href="/tags/String-Match/" rel="tag"># String Match</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/30/inter-process-communication/" rel="next" title="进程间通信方式">
+                <i class="fa fa-chevron-left"></i> 进程间通信方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/01/computer-networks-review/" rel="prev" title="计算机网络基础复习">
+                计算机网络基础复习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#朴素字符串匹配算法"><span class="nav-number">1.</span> <span class="nav-text">朴素字符串匹配算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KMP匹配算法"><span class="nav-number">2.</span> <span class="nav-text">KMP匹配算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Prefix-Function"><span class="nav-number">2.1.</span> <span class="nav-text">Prefix Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KMP-Match"><span class="nav-number">2.2.</span> <span class="nav-text">KMP Match</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

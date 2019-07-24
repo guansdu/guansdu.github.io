@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="不同于vector的连续线性空间，list就显得复杂的多，">
+<meta name="keywords" content="C++,STL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STL源码剖析-学习笔记（六）:list">
+<meta property="og:url" content="http://yoursite.com/2016/07/21/learn-stl6-list/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="不同于vector的连续线性空间，list就显得复杂的多，">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-list%2F1.png">
+<meta property="og:image" content="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-list/2.png">
+<meta property="og:updated_time" content="2017-01-13T03:12:42.221Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="STL源码剖析-学习笔记（六）:list">
+<meta name="twitter:description" content="不同于vector的连续线性空间，list就显得复杂的多，">
+<meta name="twitter:image" content="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-list%2F1.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/07/21/learn-stl6-list/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>STL源码剖析-学习笔记（六）:list | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/21/learn-stl6-list/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">STL源码剖析-学习笔记（六）:list
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-07-21 16:22:25" itemprop="dateCreated datePublished" datetime="2016-07-21T16:22:25+08:00">2016-07-21</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-01-13 11:12:42" itemprop="dateModified" datetime="2017-01-13T11:12:42+08:00">2017-01-13</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/STL/" itemprop="url" rel="index"><span itemprop="name">STL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>不同于vector的连续线性空间，list就显得复杂的多，<a id="more"></a>它每次插入或者删除一个元素，就配置或者释放一个空间。对list来说，在任何位置进行插入或者删除元素的操作，都是在常数时间内完成。</p>
+<p>当然对比其他序列式容器，比如vector和数组，list的缺点也很明显：缺乏元素的随机访问能力，要访问某个位置的元素，我们只有从已知的位置进行迭代（begin、end）；要消耗额外的内存来保持元素之间的链表信息。</p>
+<h2 id="list节点"><a href="#list节点" class="headerlink" title="list节点"></a>list节点</h2><p>在STL中，list的节点被设计为如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> _<span class="title">list_node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">typedef</span> <span class="keyword">void</span>* void_pointer;</span><br><span class="line">	void_pointer prev;</span><br><span class="line">	void_pointer next;</span><br><span class="line">	T data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>显然我们可以知道list是一个<strong>双向链表</strong>。（<code>void*</code>是无类型指针，可以指向任何类型的数据—-使用类型强制转换）<br><img src="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-list%2F1.png" alt="list的节点表示"></p>
+<h2 id="list的迭代器"><a href="#list的迭代器" class="headerlink" title="list的迭代器"></a>list的迭代器</h2><p>list不保证其节点在存储空间中连续存在，所以不可用普通指针作为迭代器。而list又是双向链表，因此迭代器要具备前移和后移的功能，所以list的迭代器是<code>bidirectional iterator</code>。</p>
+<p>list还有一个特点就是，就行插入（insert）和结合（splice）操作不会使原迭代器失效。进行删除（erase）操作时，也只有指向被删除元素的迭代器失效，并不会影响其他迭代器。</p>
+<h2 id="list元素操作"><a href="#list元素操作" class="headerlink" title="list元素操作"></a>list元素操作</h2><p>先说几个比较重要的函数：</p>
+<ul>
+<li><code>insert(iterator position, const T&amp; x)</code>:在迭代器position所指位置之前插入一个值为x的节点</li>
+<li><code>erase(iterator position)</code>:移除迭代器position所指的节点</li>
+<li><code>remove(const T&amp; x)</code>:将data值为x的节点移除</li>
+<li><code>unique()</code>:移除数值相同的连续元素，只有连续而且相同的元素节点，才会被移除一个</li>
+</ul>
+<h2 id="list实现"><a href="#list实现" class="headerlink" title="list实现"></a>list实现</h2><p>参考书中的list源码进行实现，在编写的过程中遇到了几个问题，在这里注明下：</p>
+<p>一、关于<code>.</code>和<code>-&gt;</code>的区别：都是用于访问类的成员，<code>.</code>的左边必须是类的实例，而<code>-&gt;</code>的左边则是类的指针。</p>
+<p>二、被const修饰的变量不允许进行修改。</p>
+<p>三、值传递、引用传递和指针传递。</p>
+<p>在实现的过程中我们要注意list的结构，它用了一个data域为空的头节点来赋值建立双链表，当我们建立一个空list时，它的结构如下：</p>
+<p><img src="http://7xv63n.com1.z0.glb.clouddn.com/learn-stl-list/2.png" alt="空的list"></p>
+<p>在源码中用<code>node</code>来表示头节点，因此我们可以知道<code>node-&gt;next</code>是首节点，<code>node-&gt;perv</code>是尾节点。</p>
+<p>具体代码如下<code>stl_list.h</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _MY_LIST_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>  _MY_LIST_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//list节点</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">ListNode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">typedef</span> <span class="keyword">void</span>* void_pointer;</span><br><span class="line">	void_pointer prev;</span><br><span class="line">	void_pointer next;</span><br><span class="line">	T data;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//list的迭代器</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>, <span class="title">class</span> <span class="title">Ref</span>, <span class="title">class</span> <span class="title">Ptr</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">ListIterator</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">typedef</span> ListIterator&lt;T, T&amp;, T*&gt; iter;</span><br><span class="line">	<span class="keyword">typedef</span> ListIterator&lt;T, Ref, Ptr&gt; self;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">typedef</span> Ref reference;</span><br><span class="line">	<span class="keyword">typedef</span> Ptr pointer;</span><br><span class="line">	<span class="keyword">typedef</span> ListNode&lt;T&gt;* link_type;</span><br><span class="line">	link_type node;</span><br><span class="line">	<span class="comment">//构造函数</span></span><br><span class="line">	ListIterator() &#123; &#125;</span><br><span class="line">	ListIterator(link_type x) : node(x) &#123; &#125;    <span class="comment">//这里利用了ListNode默认的拷贝构造函数</span></span><br><span class="line">	ListIterator(<span class="keyword">const</span> iter&amp; x) : node(x.node) &#123; &#125;</span><br><span class="line">	<span class="comment">//操作符重载</span></span><br><span class="line">	<span class="keyword">bool</span> <span class="keyword">operator</span>==(<span class="keyword">const</span> self&amp; x) &#123; <span class="keyword">return</span> node == x.node; &#125;</span><br><span class="line">	<span class="keyword">bool</span> <span class="keyword">operator</span>!=(<span class="keyword">const</span> self&amp; x) &#123; <span class="keyword">return</span> node != x.node; &#125;</span><br><span class="line"></span><br><span class="line">	reference <span class="keyword">operator</span>*() <span class="keyword">const</span> &#123; <span class="keyword">return</span> ((*node).data); &#125;</span><br><span class="line">	pointer <span class="keyword">operator</span>-&gt;() <span class="keyword">const</span> &#123; <span class="keyword">return</span> &amp;(<span class="keyword">operator</span>*()); &#125;</span><br><span class="line"></span><br><span class="line">	self&amp; <span class="keyword">operator</span>++()</span><br><span class="line">	&#123;</span><br><span class="line">		node = (link_type) ((*node).next);</span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	self&amp; <span class="keyword">operator</span>--()</span><br><span class="line">	&#123;</span><br><span class="line">		node = (link_type) ((*node).prev);</span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">List</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">typedef</span> ListIterator&lt;T, T&amp;, T*&gt; iter;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="keyword">typedef</span> ListNode&lt;T&gt; list_node;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">typedef</span> list_node* link_type;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	link_type node;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	List()</span><br><span class="line">	&#123;</span><br><span class="line">		node = (link_type)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct ListNode&lt;T&gt;));</span><br><span class="line">		node-&gt;next = node;</span><br><span class="line">		node-&gt;prev = node;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//这里在返回节点时不可照搬书中代码，因为返回的node的类型是link_type，并不是iter。</span></span><br><span class="line">	<span class="function">iter <span class="title">begin</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> iter( (link_type) ((*node).next) ); &#125;</span><br><span class="line">	<span class="function">iter <span class="title">end</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> iter(node); &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//取首节点的元素值</span></span><br><span class="line">	<span class="function">T&amp; <span class="title">front</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> *begin(); &#125;</span><br><span class="line">	<span class="comment">//取尾节点的元素值</span></span><br><span class="line">	<span class="function">T&amp; <span class="title">back</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> *(--end()); &#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> node-&gt;next == node; &#125;</span><br><span class="line">	<span class="comment">//返回当前list中元素的个数</span></span><br><span class="line">	<span class="keyword">size_t</span> size()</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">size_t</span> result = <span class="number">0</span>;</span><br><span class="line">		iter first = begin();</span><br><span class="line">		iter last = end();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (first != last)</span><br><span class="line">		&#123;</span><br><span class="line">			++first;</span><br><span class="line">			result++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> result;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//在迭代器position之前插入一个值为x的节点</span></span><br><span class="line">	<span class="function">iter <span class="title">insert</span><span class="params">(iter position, <span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		link_type tmp = (link_type)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct ListNode&lt;T&gt;));</span><br><span class="line">		tmp-&gt;data = x;</span><br><span class="line"></span><br><span class="line">		tmp-&gt;next = position.node;</span><br><span class="line">		tmp-&gt;prev = position.node-&gt;prev;</span><br><span class="line">		(link_type(position.node-&gt;prev))-&gt;next = tmp;</span><br><span class="line">		position.node-&gt;prev = tmp;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> iter(tmp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//插入一个节点，作为尾结点</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">push_back</span><span class="params">(<span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		insert(end(), x);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//插入一个结点，作为首节点</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">push_front</span><span class="params">(<span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		insert(begin(), x);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//删除position所指向的结点</span></span><br><span class="line">	<span class="function">iter <span class="title">erase</span><span class="params">(iter position)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		link_type next_node = link_type (position.node-&gt;next);</span><br><span class="line">		link_type prev_node = link_type (position.node-&gt;prev);</span><br><span class="line"></span><br><span class="line">		prev_node-&gt;next = next_node;</span><br><span class="line">		next_node-&gt;prev = prev_node;</span><br><span class="line"></span><br><span class="line">		<span class="built_in">free</span>(position.node);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> iter(next_node);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">pop_back</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		iter tmp = end();</span><br><span class="line">		erase(--tmp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">pop_front</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		erase(begin());</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//移除值为x的节点</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">remove</span><span class="params">(<span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		iter first = begin();</span><br><span class="line">		iter last = end();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (first != last)</span><br><span class="line">		&#123;</span><br><span class="line">			iter tmp = first;</span><br><span class="line">			++first;</span><br><span class="line">			<span class="keyword">if</span> (*tmp == x)</span><br><span class="line">				erase(tmp);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//移除连续相同的元素</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">unique</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		iter first = begin();</span><br><span class="line">		iter last = end();</span><br><span class="line">		<span class="keyword">if</span> (first == last)</span><br><span class="line">			<span class="keyword">return</span> ;</span><br><span class="line">		iter tmp = first;</span><br><span class="line">		<span class="keyword">while</span> (++first != last)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (*tmp == *first)</span><br><span class="line">			&#123;</span><br><span class="line">				erase(tmp);</span><br><span class="line">			&#125;</span><br><span class="line">			tmp = first;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//遍历并打印list</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		iter tmp = begin();</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"list: "</span>;</span><br><span class="line">		<span class="keyword">while</span> (tmp != end())</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; *tmp &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">			++tmp;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="comment">//将[first,last)范围的元素移动到position之前</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">transfer</span><span class="params">(iter position, iter first, iter last)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (position != last)</span><br><span class="line">		&#123;</span><br><span class="line">			(link_type (last.node-&gt;prev))-&gt;next = position.node;</span><br><span class="line">			(link_type (first.node-&gt;prev))-&gt;next = last.node;</span><br><span class="line">			(link_type (position.node-&gt;prev))-&gt;next = first.node;</span><br><span class="line"></span><br><span class="line">			link_type tmp = link_type (position.node-&gt;prev);</span><br><span class="line"></span><br><span class="line">			position.node-&gt;prev = last.node-&gt;prev;</span><br><span class="line">			last.prev-&gt;prev = first.node-&gt;prev;</span><br><span class="line">			first.node-&gt;prev = tmp;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>一个测试程序<code>stl_list_test.cpp</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"my_list.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----init:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	List&lt;<span class="keyword">int</span>&gt; li;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span>&lt;&lt; li.size() &lt;&lt; <span class="built_in">endl</span>;    <span class="comment">//0</span></span><br><span class="line"></span><br><span class="line">	li.push_back(<span class="number">4</span>);</span><br><span class="line">	li.push_back(<span class="number">4</span>);</span><br><span class="line">	li.push_back(<span class="number">3</span>);</span><br><span class="line">	li.push_back(<span class="number">3</span>);</span><br><span class="line">	li.push_back(<span class="number">2</span>);</span><br><span class="line">	li.push_back(<span class="number">2</span>);</span><br><span class="line">	li.push_back(<span class="number">1</span>);</span><br><span class="line">	li.push_back(<span class="number">1</span>);</span><br><span class="line">	li.print();    <span class="comment">//4 4 3 3 2 2 1 1</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span>&lt;&lt; li.size() &lt;&lt; <span class="string">", front:"</span>&lt;&lt;li.front() &lt;&lt; <span class="string">", back:"</span> &lt;&lt; li.back() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----use push_front:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	li.push_front(<span class="number">5</span>);</span><br><span class="line">	li.print();    <span class="comment">//5 4 4 3 3 2 2 1 1</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span>&lt;&lt; li.size() &lt;&lt; <span class="string">", front:"</span>&lt;&lt;li.front() &lt;&lt; <span class="string">", back:"</span> &lt;&lt; li.back() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----use unique:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	li.unique();</span><br><span class="line">	li.print();    <span class="comment">//5 4 3 2 1</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span>&lt;&lt; li.size() &lt;&lt; <span class="string">", front:"</span>&lt;&lt;li.front() &lt;&lt; <span class="string">", back:"</span> &lt;&lt; li.back() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----use remove:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	li.remove(<span class="number">1</span>);</span><br><span class="line">	li.print();    <span class="comment">//5 4 3 2</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span>&lt;&lt; li.size() &lt;&lt; <span class="string">", front:"</span>&lt;&lt;li.front() &lt;&lt; <span class="string">", back:"</span> &lt;&lt; li.back() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----use pop_back:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	li.pop_back();</span><br><span class="line">	li.print();    <span class="comment">//5 4 3</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span>&lt;&lt; li.size() &lt;&lt; <span class="string">", front:"</span>&lt;&lt;li.front() &lt;&lt; <span class="string">", back:"</span> &lt;&lt; li.back() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----use pop_front:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	li.pop_front();</span><br><span class="line">	li.print();    <span class="comment">//4 3</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span>&lt;&lt; li.size() &lt;&lt; <span class="string">", front:"</span>&lt;&lt;li.front() &lt;&lt; <span class="string">", back:"</span> &lt;&lt; li.back() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码我放在github上了，下载地址：<a href="https://github.com/guansdu/Learning-STL/tree/master/list" target="_blank" rel="noopener">learn-stl-list</a>。</p>
+<p>另外还有一份关于slist的版本（可参考<a href="https://github.com/guansdu/Learning-STL/tree/master/slist" target="_blank" rel="noopener">learn-stl-slist</a>。），slist和list不同之处在于slist是单链表，并不提供双向访问的迭代器，所以slist的迭代器是<code>forward iterator</code>。slist只提供了<code>push_front</code>和<code>pop_front</code>，所以实际上slist中元素的顺序会和插入的顺序相反。</p>
+<p>参考资料：</p>
+<ul>
+<li><ol>
+<li><a href="http://www.cplusplus.com/reference/list/list/" target="_blank" rel="noopener">list - C++ Reference</a></li>
+</ol>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/STL/" rel="tag"># STL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/15/learn-stl5-heap/" rel="next" title="STL源码剖析-学习笔记（五）:heap">
+                <i class="fa fa-chevron-left"></i> STL源码剖析-学习笔记（五）:heap
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/24/learn-stl7-deque/" rel="prev" title="STL源码剖析-学习笔记（七）:deque">
+                STL源码剖析-学习笔记（七）:deque <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#list节点"><span class="nav-number">1.</span> <span class="nav-text">list节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list的迭代器"><span class="nav-number">2.</span> <span class="nav-text">list的迭代器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list元素操作"><span class="nav-number">3.</span> <span class="nav-text">list元素操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list实现"><span class="nav-number">4.</span> <span class="nav-text">list实现</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

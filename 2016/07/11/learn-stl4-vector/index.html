@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="在STL中vector可以说是数组的的一个扩展，它们二者的数据安排">
+<meta name="keywords" content="C++,STL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STL源码剖析-学习笔记（四）:vector">
+<meta property="og:url" content="http://yoursite.com/2016/07/11/learn-stl4-vector/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="在STL中vector可以说是数组的的一个扩展，它们二者的数据安排">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-01-13T03:12:39.428Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="STL源码剖析-学习笔记（四）:vector">
+<meta name="twitter:description" content="在STL中vector可以说是数组的的一个扩展，它们二者的数据安排">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/07/11/learn-stl4-vector/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>STL源码剖析-学习笔记（四）:vector | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/11/learn-stl4-vector/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">STL源码剖析-学习笔记（四）:vector
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-07-11 16:02:00" itemprop="dateCreated datePublished" datetime="2016-07-11T16:02:00+08:00">2016-07-11</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-01-13 11:12:39" itemprop="dateModified" datetime="2017-01-13T11:12:39+08:00">2017-01-13</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/STL/" itemprop="url" rel="index"><span itemprop="name">STL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在STL中vector可以说是数组的的一个扩展，它们二者的数据安排<a id="more"></a>以及操作方式十分相似，都定义的是一块连续的线性空间，这也就意味着它们都可以用<strong>普通指针加偏移量</strong>就可以访问其中的各个元素。但是vector是动态空间，大小可以改变；而数组是静态空间，一旦分配后大小就不能改变。</p>
+<p>对比其他动态的序列式容器（比如list，deque），vector在随机元素访问上的效率和在末端进行插入、删除元素操作的效率很高；但是在除了末端的元素以外的元素上进行插入、删除操作时的效率就不如其他的这些容器了。</p>
+<h2 id="vector结构"><a href="#vector结构" class="headerlink" title="vector结构"></a>vector结构</h2><p>在vector中用两个迭代器<code>start</code>和<code>finish</code>分别指向这一块连续空间中已被使用的范围，用迭代器<code>end_of_storage</code>来指向整块连续空间的末尾。</p>
+<p>有了这三个迭代器，便可以轻易实现很多其他功能：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> ...</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">vector</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  ...</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">  iterator start;</span><br><span class="line">  iterator finish;</span><br><span class="line">  iterator end_of_storage;</span><br><span class="line">  ...</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function">iterator <span class="title">begin</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> start; &#125;</span><br><span class="line">  <span class="function">iterator <span class="title">end</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> finish; &#125;</span><br><span class="line">  <span class="function">size_type <span class="title">size</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> size_type(end() - begin()); &#125;</span><br><span class="line">  <span class="function">size_type <span class="title">capacity</span><span class="params">()</span> <span class="keyword">const</span></span>&#123; <span class="keyword">return</span> size_type(end_of_storage() - begin()); &#125;</span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> begin() == end(); &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以知道，一个vector的容量是大于等于其大小的，一般的vector实际配置的大小比我们声明的要大，以便应对将来可能的扩充。一旦vector的大小等于容量之后，再想要加入元素，就得要申请一块新的内存空间，新的容量大小是一般是原来的<strong>两倍</strong>，然后再将以前的元素全部移动到新的空间里，最后一步就是释放原来的内存空间。</p>
+<h2 id="关于push-back"><a href="#关于push-back" class="headerlink" title="关于push_back"></a>关于push_back</h2><p>push_back(n)函数用于把新的元素加入到vector的尾端，具体的操作步骤如下：</p>
+<ul>
+<li>如果<code>finish != end_of_storage</code>，则说明备用空间还够用，就直接在备用空间上加入新元素,并调整迭代器<code>finish++</code>。</li>
+<li>若无备用空间可以，就申请新的空间，新的空间大小为<code>len = (old_size  != 0) ? (2 * old_size) : 1</code>；若原大小为0，则新的空间大小为1；若不为0，则申请配置原来大小两倍的空间。（在书中是这么写的，但实际上STL不同的实现版本这里可能不一样）</li>
+<li>将原vector中的元素拷贝到新的vector里，并调整新的<code>new_start</code>和<code>new_finish</code>指向的位置。</li>
+<li>释放原vector，调整迭代器<code>start = new_start</code> 、<code>finish = new_finish</code> 、<code>end_of_storage = new_start + len</code>。</li>
+</ul>
+<p>这里要注意的一个问题就是，<strong>一旦引发了空间的重新配置，原有的迭代器都会失效</strong>，我们在编程中要多多留意。</p>
+<h2 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h2><p>下面说几个容易混淆的函数：</p>
+<ul>
+<li><strong>size()</strong>：返回改vector中元素的个数，就是实际vector中存放对象的个数。</li>
+<li><strong>capacity()</strong>：返回当前分配给vector的存储空间，也用元素的个数来表示，一般大于等于size。额外的空间是为了适应将来vector可能的增加，在一定程度上可以避免申请新的内存空间的发生（是一个很浩大的工程）。</li>
+<li><strong>max_size()</strong>：capacity并不能限制vector的大小，当达到capacity大小后vector可以申请新的内存空间。理论上限制vector大小的是max_size，它返回的就是vector可以存放元素的个数的最大值。（但是这个最大值并不能保证vector的大小可以达到这个值，它可能会在达到这个值之前就发生了内存分配失败）</li>
+<li><strong>reserve(n)</strong>：更改vector容量的大小，使它至少可以容纳n个元素。若果当前vector的容量小雨n，则会导致vector重新申请新的内存空间使容量达到n或者更大。这个操作不会更改vector的大小（size）和已经存放的元素。</li>
+</ul>
+<p>其他的一些基本操作我写在代码中了：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----init:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; iv(<span class="number">2</span>,<span class="number">9</span>);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//2</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//2</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----push_buck 1:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.push_back(<span class="number">1</span>);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//3</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//3</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----push_buck 2:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.push_back(<span class="number">2</span>);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//4</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//4</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----push_buck 3:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.push_back(<span class="number">3</span>);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//5</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//6</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----push_buck 4:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.push_back(<span class="number">4</span>);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//6</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//6</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----push_buck 5:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.push_back(<span class="number">5</span>);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//7</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//9</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----now the vector:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; iv.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; iv[i] &lt;&lt; <span class="string">" "</span>;	<span class="comment">//9 9 1 2 3 4</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----do pop_back:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.pop_back();</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//6</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//9</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----do pop_back:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.pop_back();</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//5</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//9</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----do pop_back:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.pop_back();</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//4</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//9</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----now the vector:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; iv.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; iv[i] &lt;&lt; <span class="string">" "</span>;	<span class="comment">//9 9 1 2</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----erase 1:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator ivite = find(iv.begin(), iv.end(), <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">if</span> (ivite != iv.end())</span><br><span class="line">	&#123;</span><br><span class="line">		iv.erase(ivite);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//3</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//9</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----now the vector:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; iv.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; iv[i] &lt;&lt; <span class="string">" "</span>;	<span class="comment">//9 9 2</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----insert triple 7 before 2:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	ivite = find(iv.begin(), iv.end(), <span class="number">2</span>);</span><br><span class="line">	<span class="keyword">if</span> (ivite != iv.end())</span><br><span class="line">	&#123;</span><br><span class="line">		iv.insert(ivite, <span class="number">3</span>, <span class="number">7</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//6</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//9</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----now the vector(use at):"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; iv.size(); i++)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; iv.at(i) &lt;&lt; <span class="string">" "</span>;	<span class="comment">//9 9 7 7 2</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----whether the vector is empty:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; iv.empty() &lt;&lt; <span class="built_in">endl</span>;    <span class="comment">//0</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----get the front and back of vector:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; iv.front() &lt;&lt; <span class="string">","</span> &lt;&lt; iv.back() &lt;&lt; <span class="built_in">endl</span>;    <span class="comment">//9,2</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----use the reverse iterator:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::reverse_iterator rit = iv.rbegin();</span><br><span class="line">	<span class="keyword">for</span> (; rit!= iv.rend(); ++rit)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; *rit &lt;&lt; <span class="string">" "</span>;    <span class="comment">//2 7 7 7 9 9</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"----use reserve:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	iv.reserve(<span class="number">15</span>);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//6</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//15</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"max size:"</span> &lt;&lt; iv.max_size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//1073741823</span></span><br><span class="line"></span><br><span class="line">	iv.clear();</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"size:"</span> &lt;&lt; iv.size() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//0</span></span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"capacity:"</span> &lt;&lt; iv.capacity() &lt;&lt; <span class="built_in">endl</span>;	<span class="comment">//15</span></span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：在实际运行中你可能得到的capacity和max_size的值和我不一样，这是正常现象。<br>代码在vs2012上运行，下载地址<a href="https://github.com/guansdu/Learning-STL/tree/master/vector" target="_blank" rel="noopener">learn-stl-vector</a>。<br>参考资料：</p>
+<ol>
+<li><a href="http://www.cplusplus.com/reference/vector/vector/" target="_blank" rel="noopener">vector - C++ Reference</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/STL/" rel="tag"># STL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/28/build-blog/" rel="next" title="Win7下用Hexo建博客的一些说明">
+                <i class="fa fa-chevron-left"></i> Win7下用Hexo建博客的一些说明
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/15/learn-stl5-heap/" rel="prev" title="STL源码剖析-学习笔记（五）:heap">
+                STL源码剖析-学习笔记（五）:heap <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#vector结构"><span class="nav-number">1.</span> <span class="nav-text">vector结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于push-back"><span class="nav-number">2.</span> <span class="nav-text">关于push_back</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他操作"><span class="nav-number">3.</span> <span class="nav-text">其他操作</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

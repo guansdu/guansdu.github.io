@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="A qucik glimpse of C++ 11:">
+<meta name="keywords" content="C++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What&#39;s new in C++ 11?">
+<meta property="og:url" content="http://yoursite.com/2017/09/03/cpp11-new-features/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="A qucik glimpse of C++ 11:">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-09-12T03:29:21.995Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="What&#39;s new in C++ 11?">
+<meta name="twitter:description" content="A qucik glimpse of C++ 11:">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2017/09/03/cpp11-new-features/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>What's new in C++ 11? | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/03/cpp11-new-features/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">What's new in C++ 11?
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-09-03 10:59:15" itemprop="dateCreated datePublished" datetime="2017-09-03T10:59:15+08:00">2017-09-03</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-09-12 11:29:21" itemprop="dateModified" datetime="2017-09-12T11:29:21+08:00">2017-09-12</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>A qucik glimpse of C++ 11: <a id="more"></a></p>
+<h2 id="type-inference"><a href="#type-inference" class="headerlink" title="type inference"></a>type inference</h2><p><code>auto</code>：自动类型推断。不用显示指定变量类型，编译器会自动推断。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> i = <span class="number">42</span>;        <span class="comment">// i is an int</span></span><br><span class="line"><span class="keyword">auto</span> l = <span class="number">42L</span>L;      <span class="comment">// l is an long long</span></span><br><span class="line"><span class="keyword">auto</span> p = <span class="keyword">new</span> foo(); <span class="comment">// p is a foo*</span></span><br></pre></td></tr></table></figure>
+
+<p>使用auto代码更加简洁，比如以前要这么写的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::const_iterator itr = myvec.cbegin(); itr != myvec.cend(); ++itr)</span><br></pre></td></tr></table></figure>
+
+<p>现在这么写即可：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> itr = myvec.cbegin(); itr != myvec.cend(); ++itr)</span><br></pre></td></tr></table></figure>
+
+<p>甚至可以这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span>&amp; x : myvec)</span><br></pre></td></tr></table></figure>
+
+<p><code>decltype</code>：在编译时期推断表达式的类型，而不计算表达式的值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> some_int;</span><br><span class="line"><span class="keyword">decltype</span>(some_int) other_integer_variable = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="range-based-for-loop"><a href="#range-based-for-loop" class="headerlink" title="range-based for loop"></a>range-based for loop</h2><p>如果我们不关心元素的下标的话，对for循环可以这么使用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> my_array[<span class="number">5</span>] = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="comment">// double the value of each element in my_array:</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span>&amp; x : my_array) &#123;</span><br><span class="line">    x *= <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// similar but also using type inference for array elements</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span>&amp; x : my_array) &#123;</span><br><span class="line">    x *= <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="lambda-functions-and-expressions"><a href="#lambda-functions-and-expressions" class="headerlink" title="lambda functions and expressions"></a>lambda functions and expressions</h2><p>C++ 11现在支持匿名函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> print_it = [](<span class="keyword">int</span> n) -&gt;<span class="keyword">void</span> &#123;<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; n &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;;</span><br><span class="line"><span class="built_in">std</span>::for_each(<span class="built_in">std</span>::begin(v), <span class="built_in">std</span>::end(v), print_it);</span><br></pre></td></tr></table></figure>
+
+<p>标准格式为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[capture](parameters) -&gt; return_type &#123; function_body &#125;</span><br></pre></td></tr></table></figure>
+
+<p>[]叫做捕获说明符，表示一个lambda表达式的开始。lambda函数能够捕获lambda函数外的具有自动存储时期的变量。函数体与这些变量的集合合起来叫Closures。</p>
+<ul>
+<li>[] 不捕获任何变量</li>
+<li>[&amp;] 捕获外部作用域中所有变量，并作为引用在函数体中使用</li>
+<li>[=] 捕获外部作用域中所有变量，并拷贝一份在函数体中使用</li>
+<li>[=, &amp;foo] 捕获外部作用域中所有变量，并拷贝一份在函数体中使用，但是对foo变量使用引用</li>
+<li>[bar] 捕获bar变量并且拷贝一份在函数体重使用，同时不捕获其他变量</li>
+<li>[x, &amp;y] x按值传递，y按引用传递</li>
+<li>[this] 捕获当前类中的this指针。如果已经使用了&amp;或者=就默认添加此选项。</li>
+</ul>
+<h2 id="explicit-overrides-and-final"><a href="#explicit-overrides-and-final" class="headerlink" title="explicit overrides and final"></a>explicit overrides and final</h2><p>在C++ 11中可以用<code>override</code>关键字显示的指定子类重写父类的虚函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Base</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">some_func</span><span class="params">(<span class="keyword">float</span>)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Derived</span> :</span> Base </span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">some_func</span><span class="params">(<span class="keyword">float</span>)</span> override</span>; <span class="comment">// OK</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">some_func</span><span class="params">(<span class="keyword">float</span>)</span> override</span>; <span class="comment">// ill-formed - doesn't override a base class method</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>用<code>final</code>关键字来阻止子类重写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Base</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> final</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Derived</span> :</span> Base </span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span></span>; <span class="comment">// ill-formed because the virtual function Base::f has been marked final</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="null-pointer-constant"><a href="#null-pointer-constant" class="headerlink" title="null pointer constant"></a>null pointer constant</h2><p>之前我们可以用NULL来代表空指针，而NULL被定义为0或者<code>((void*) 0)</code>。这就导致了函数重载过程中的一些歧义。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>由于C++禁止了<code>void *</code>到其他类型指针的隐式转换，因此<code>foo(NULL)</code>会默认调用的是<code>foo(int)</code>。这并不是我们想要的结果。</p>
+<p>C++ 11用<code>nullptr</code>来代表空指针，<code>nullpt</code>和任何指针类型以及类成员指针类型的空值之间可以发生隐式类型转换，同样也可以隐式转换为bool型（取值为false）。但是不存在到整形的隐式类型转换。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span>* pc = <span class="literal">nullptr</span>;     <span class="comment">// OK</span></span><br><span class="line"><span class="keyword">int</span> * pi = <span class="literal">nullptr</span>;     <span class="comment">// OK</span></span><br><span class="line"><span class="keyword">int</span>    i = <span class="literal">nullptr</span>;     <span class="comment">// error</span></span><br><span class="line"></span><br><span class="line">foo(pc);           <span class="comment">// call foo(char *)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="hash-tables"><a href="#hash-tables" class="headerlink" title="hash tables"></a>hash tables</h2><p>终于把unordered associative containers加入了标准库。</p>
+<ul>
+<li>std::unordered_map</li>
+<li>std::unordered_set</li>
+<li>std::unordered_multimap</li>
+<li>std::unordered_multiset</li>
+</ul>
+<p>对比之前的<code>std::map</code>和<code>std::set</code>，新的采用了哈希表来实现，链地址法处理碰撞冲突，而且容器中元素是无序的。</p>
+<h2 id="smart-pointers"><a href="#smart-pointers" class="headerlink" title="smart pointers"></a>smart pointers</h2><p>C++ 11提供了新的<code>std::unique_ptr</code>，改进了TR1中的<code>std::shared_ptr</code>和<code>std::weak_ptr</code>。注意<code>auto_ptr</code>已经弃用。</p>
+<h2 id="uniform-initialization"><a href="#uniform-initialization" class="headerlink" title="uniform initialization"></a>uniform initialization</h2><p>之前我们只能对结构体和POD使用aggregate initializers，像这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Object</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">float</span> first;</span><br><span class="line">    <span class="keyword">int</span> second;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Object scalar = &#123;<span class="number">0.43f</span>, <span class="number">10</span>&#125;; <span class="comment">// One Object, with first=0.43f and second=10</span></span><br></pre></td></tr></table></figure>
+
+<p>C++ 11拓展了这一初始化方式，使其可以在任意类型使用，比如标准容器vector可以如下初始化了：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; v&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; v = &#123; <span class="string">"xyzzy"</span>, <span class="string">"plugh"</span>, <span class="string">"abracadabra"</span> &#125;;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; v(&#123; <span class="string">"xyzzy"</span>, <span class="string">"plugh"</span>, <span class="string">"abracadabra"</span> &#125;);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; v&#123; <span class="string">"xyzzy"</span>, <span class="string">"plugh"</span>, <span class="string">"abracadabra"</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>再比如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AltStruct</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    AltStruct(<span class="keyword">int</span> x, <span class="keyword">double</span> y) : x_&#123;x&#125;, y_&#123;y&#125; &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="keyword">int</span> x_;</span><br><span class="line">        <span class="keyword">double</span> y_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">AltStruct var2&#123;<span class="number">2</span>, <span class="number">4.3</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="initializer-lists"><a href="#initializer-lists" class="headerlink" title="initializer lists"></a>initializer lists</h2><p>通过引入<code>std::initializer_list</code>允许如下的初始化方式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyNumber</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    MyNumber(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">initializer_list</span>&lt;<span class="keyword">int</span>&gt; &amp;v) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> itm : v) </span><br><span class="line">            mVec.push_back(itm);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> itm : mVec) </span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; itm &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; mVec;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">MyNumber mn = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="explicitly-defaulted-and-deleted-special-member-functions"><a href="#explicitly-defaulted-and-deleted-special-member-functions" class="headerlink" title="explicitly defaulted and deleted special member functions"></a>explicitly defaulted and deleted special member functions</h2><p>C++ 11中可以显示的指定或者删除a default constructor, a copy constructor, a copy assignment operator (operator=), and a destructor了。以前我们要禁止某个类的拷贝，需要声明该类的copy constructor和copy assignment operator为private，现在直接指定为<code>delete</code>即可：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">NonCopyable</span> &#123;</span></span><br><span class="line">    NonCopyable() = <span class="keyword">default</span>;</span><br><span class="line">    NonCopyable(<span class="keyword">const</span> NonCopyable&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    NonCopyable&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> NonCopyable&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>用<code>defalut</code>显示指定默认构造器：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SomeType</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    SomeType() = <span class="keyword">default</span>; <span class="comment">//The default constructor is explicitly stated.</span></span><br><span class="line">    SomeType(OtherType value);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>也可以用<code>delete</code>指定某个成员函数特定的参数不能调用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">NoInt</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">double</span> i)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span>)</span> </span>= <span class="keyword">delete</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>现在调用<code>f(int)</code>会被编译器拒绝。</p>
+<h2 id="Rvalue-References-and-move-constructor"><a href="#Rvalue-References-and-move-constructor" class="headerlink" title="Rvalue References and move constructor"></a>Rvalue References and move constructor</h2><p>右值引用是用来支持std::move语义的，move语义是指将一个同类型的对象A中的资源（可能是在堆上分配，也可能是一个文件句柄或者其他系统资源）搬移到另一个同类型的对象B中，解除对象A对该资源的所有权。这样可以减少不必要的临时对象的构造、拷贝以及析构等动作。</p>
+<p>为了支持move语义，C++ 11新增了move constructor，定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Moveable</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Moveable() :i(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">3</span>)) &#123;<span class="built_in">cout</span> &lt;&lt; <span class="string">"default"</span> &lt;&lt; <span class="built_in">endl</span>;&#125;</span><br><span class="line">    ~Moveable() &#123; <span class="keyword">delete</span> i; &#125;</span><br><span class="line">    Moveable(<span class="keyword">const</span> Moveable &amp; m) : i(<span class="keyword">new</span> <span class="keyword">int</span>(*m.i)) &#123;<span class="built_in">cout</span> &lt;&lt; <span class="string">"copy"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">    Moveable(Moveable &amp;&amp; m) :i(m.i)  <span class="comment">// move constructor</span></span><br><span class="line">    &#123;</span><br><span class="line">        m.i = <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"move"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span>* i;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>那么我们如下调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Moveable a;</span><br><span class="line"><span class="function">Moveable <span class="title">b</span><span class="params">(<span class="built_in">std</span>::move(a))</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>只会输出default和move。</p>
+<p>参考资料：<br><a href="https://en.wikipedia.org/wiki/C%2B%2B11" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/C%2B%2B11</a></p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/02/leetcode-edit-distance/" rel="next" title="LeetCode 72. Edit Distance">
+                <i class="fa fa-chevron-left"></i> LeetCode 72. Edit Distance
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/03/leetcode-add-two-numbers-II/" rel="prev" title="LeetCode 445. Add Two Numbers II">
+                LeetCode 445. Add Two Numbers II <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#type-inference"><span class="nav-number">1.</span> <span class="nav-text">type inference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#range-based-for-loop"><span class="nav-number">2.</span> <span class="nav-text">range-based for loop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lambda-functions-and-expressions"><span class="nav-number">3.</span> <span class="nav-text">lambda functions and expressions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#explicit-overrides-and-final"><span class="nav-number">4.</span> <span class="nav-text">explicit overrides and final</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#null-pointer-constant"><span class="nav-number">5.</span> <span class="nav-text">null pointer constant</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hash-tables"><span class="nav-number">6.</span> <span class="nav-text">hash tables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#smart-pointers"><span class="nav-number">7.</span> <span class="nav-text">smart pointers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#uniform-initialization"><span class="nav-number">8.</span> <span class="nav-text">uniform initialization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#initializer-lists"><span class="nav-number">9.</span> <span class="nav-text">initializer lists</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#explicitly-defaulted-and-deleted-special-member-functions"><span class="nav-number">10.</span> <span class="nav-text">explicitly defaulted and deleted special member functions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rvalue-References-and-move-constructor"><span class="nav-number">11.</span> <span class="nav-text">Rvalue References and move constructor</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

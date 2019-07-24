@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    }
+  };
+</script>
+
+  <meta name="description" content="这几天复习了一下C++语言基础，总结了一些容易犯错（忽视）的地方">
+<meta name="keywords" content="C++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++基础复习总结">
+<meta property="og:url" content="http://yoursite.com/2017/07/24/cpp-review/index.html">
+<meta property="og:site_name" content="Klaus&#39;s blog">
+<meta property="og:description" content="这几天复习了一下C++语言基础，总结了一些容易犯错（忽视）的地方">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-09-12T13:13:00.175Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++基础复习总结">
+<meta name="twitter:description" content="这几天复习了一下C++语言基础，总结了一些容易犯错（忽视）的地方">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2017/07/24/cpp-review/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>C++基础复习总结 | Klaus's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Klaus's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Move on</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/24/cpp-review/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Klaus Guan">
+      <meta itemprop="description" content="Move on">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Klaus's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++基础复习总结
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-07-24 20:56:18" itemprop="dateCreated datePublished" datetime="2017-07-24T20:56:18+08:00">2017-07-24</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-09-12 21:13:00" itemprop="dateModified" datetime="2017-09-12T21:13:00+08:00">2017-09-12</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这几天复习了一下C++语言基础，总结了一些容易犯错（忽视）的地方<a id="more"></a>，记录如下：</p>
+<hr>
+<p><em>持续完善中…</em></p>
+<hr>
+<h2 id="字符数组"><a href="#字符数组" class="headerlink" title="字符数组"></a>字符数组</h2><p>比如<code>char c1={&#39;a&#39;,&#39;b&#39;,&#39;c&#39;}</code>和<code>char c2[]=&quot;abc&quot;</code>的区别，<code>sizeof(c1)=3</code>，<code>sizeof(c2)=4</code>。但是strlen函数不会计算<code>&#39;\0&#39;</code>。</p>
+<p>还有<code>char *p=&quot;abc&quot;</code>和<code>char c3[]=&quot;abc&quot;</code>的区别，前者的<code>&quot;abc&quot;</code>是存放在静态数据区的，不可以被修改，而后者在栈区，可以修改。</p>
+<p>注意我们自己在使用的过程中，要用这种形式的</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> ca2[] = &#123;<span class="string">'C'</span>, <span class="string">'+'</span>, <span class="string">'+'</span>, <span class="string">'\0'</span>&#125;;</span><br><span class="line"><span class="keyword">char</span> ca3[] = <span class="string">"C++"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *cp = <span class="string">"C++"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>都要有字符串结束标志（第一个是明确指定，后两个系统会自动加上）。</p>
+<h2 id="char-p-5-和char-p-5-区别"><a href="#char-p-5-和char-p-5-区别" class="headerlink" title="char *p[5]和char (*p)[5]区别"></a><code>char *p[5]</code>和<code>char (*p)[5]</code>区别</h2><p>前者是数组，存放5个char *类型数据；后者是一个指针，指向一个长度为5的数组。<br>例如</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> ia[<span class="number">3</span>][<span class="number">4</span>]; <span class="comment">// array of size 3, each element is an array of ints of size 4</span></span><br><span class="line"><span class="comment">// wrong: int *p = ia;</span></span><br><span class="line"><span class="keyword">int</span> (*ip)[<span class="number">4</span>] = ia; <span class="comment">// ip points to an array of 4 ints</span></span><br><span class="line">ip = &amp;ia[<span class="number">2</span>]; <span class="comment">// ia[2] is an array of 4 ints</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="指针和引用的区别"><a href="#指针和引用的区别" class="headerlink" title="指针和引用的区别"></a>指针和引用的区别</h2><p>引用在定义时必须要初始化，否则会出错，引用始终指向同一个特定的对象，给引用赋值修改的是该引用所关联的对象的值，而并不是使引用与另一个对象关联。</p>
+<h2 id="区别a-1和-amp-a-1"><a href="#区别a-1和-amp-a-1" class="headerlink" title="区别a+1和(&amp;a)+1"></a>区别a+1和(&amp;a)+1</h2><p>如果int a[3]={1,2,3}的话，a+1指向数组的第二个数，(&amp;a)+1指向3后面的一个位置，在数组外。</p>
+<h2 id="size-t和ptrdiff-t"><a href="#size-t和ptrdiff-t" class="headerlink" title="size_t和ptrdiff_t"></a><code>size_t</code>和<code>ptrdiff_t</code></h2><p>数组长度是<code>size_t</code>类型，unsigned；<code>ptrdiff_t</code>是指针的差值类型，signed，都是和机器相关的类型。</p>
+<h2 id="const和指针"><a href="#const和指针" class="headerlink" title="const和指针"></a>const和指针</h2><p><code>const int *p</code>，const限定了<code>*p</code>所指向的对象，而不是p，等同于<code>int const *p</code>；</p>
+<p><code>int *const p</code>，const限定了p，p不可变；</p>
+<p><code>const int *const p</code>，两个都限定，不可变；</p>
+<p>不允许把const对象的地址赋给一个非const指针；</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">double</span> pi = <span class="number">3.14</span>;</span><br><span class="line"><span class="comment">// wrong: double *ptr = &amp;pi;</span></span><br></pre></td></tr></table></figure>
+
+<p>允许把非 const 对象的地址赋给指向 const 对象的指针；</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> pi = <span class="number">3.14</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">double</span> *cptr = &amp; pi;</span><br><span class="line"><span class="comment">// 此时*cptr不可变，cptr可变</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="指针函数"><a href="#指针函数" class="headerlink" title="指针函数"></a>指针函数</h2><p>指针函数是指返回值是指针的函数，即本质是一个函数。</p>
+<h2 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h2><p>函数指针是指向函数的指针变量，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> x)</span></span>; <span class="comment">// 声明一个函数</span></span><br><span class="line"><span class="keyword">int</span> (*f) (<span class="keyword">int</span> x); <span class="comment">// 声明一个函数指针</span></span><br><span class="line">f = &amp;func; <span class="comment">// 将函数地址赋给函数指针</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="sizeof"><a href="#sizeof" class="headerlink" title="sizeof"></a>sizeof</h2><p>我们举个例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> str[] = <span class="string">"12345"</span>; <span class="comment">// sizeof(str) = 6</span></span><br><span class="line"><span class="keyword">char</span> *p = str; <span class="comment">//sizeof(p) = 4</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a[<span class="number">5</span>]; <span class="comment">//sizeof(a) = 5*4 = 20</span></span><br></pre></td></tr></table></figure>
+
+<p>如果把字符数组当函数参数的话：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">char</span> str[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="keyword">sizeof</span>(str) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么输出还是4。</p>
+<p>还要注意另一种写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *p1[<span class="number">3</span>] = &#123; <span class="string">"abc"</span>, <span class="string">"def"</span>, <span class="string">"ghi"</span> &#125;; <span class="comment">// sizeof(p1) = 3*4 = 12</span></span><br><span class="line"><span class="keyword">char</span> **p2 = p1; <span class="comment">// sizeof(p2) = 4</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="实现strcpy"><a href="#实现strcpy" class="headerlink" title="实现strcpy()"></a>实现strcpy()</h2><p>在头文件cstring里面。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回值：目标串的地址。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//对于出现异常的情况ANSI-C99标准并未定义，故由实现者决定返回值，通常为NULL。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//参数：des为目标字符串，source为原字符串。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// while((*des++=*source++));的解释：赋值表达式返回左操作数，所以在赋值'\0'后，循环停止。</span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">strcpy</span><span class="params">(<span class="keyword">char</span>* des,<span class="keyword">const</span> <span class="keyword">char</span>* source)</span></span></span><br><span class="line"><span class="function">　</span></span><br><span class="line"><span class="function"></span>&#123;    　</span><br><span class="line">    <span class="keyword">char</span>* r=des;</span><br><span class="line"></span><br><span class="line">    assert((des != <span class="literal">NULL</span>) &amp;&amp; (source != <span class="literal">NULL</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>((*r++ = *source++)!=<span class="string">'\0'</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> des;</span><br><span class="line">　</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="实现memcpy"><a href="#实现memcpy" class="headerlink" title="实现memcpy()"></a>实现memcpy()</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 考虑内存重叠的实现</span></span><br><span class="line"><span class="comment">// 也可使用memmove</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memcpy</span><span class="params">(<span class="keyword">void</span> *dest, <span class="keyword">const</span> <span class="keyword">void</span> *src, <span class="keyword">size_t</span> count)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    assert((dest != <span class="literal">NULL</span>) &amp;&amp; (src != <span class="literal">NULL</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> *d;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *s;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dest &gt; (src+size)) || (dest &lt; src))</span><br><span class="line">    &#123;</span><br><span class="line">        d = dest;</span><br><span class="line">        s = src;</span><br><span class="line">        <span class="keyword">while</span> (count--)</span><br><span class="line">            *d++ = *s++;        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="comment">/* overlap */</span></span><br><span class="line">    &#123;</span><br><span class="line">        d = (<span class="keyword">char</span> *)(dest + count - <span class="number">1</span>); <span class="comment">/* offset of pointer is from 0 */</span></span><br><span class="line">        s = (<span class="keyword">char</span> *)(src + count <span class="number">-1</span>);</span><br><span class="line">        <span class="keyword">while</span> (count --)</span><br><span class="line">            *d-- = *s--;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dest;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>strcpy和memcpy主要有以下3方面的区别。</p>
+<ol>
+<li>复制的内容不同。strcpy只能复制字符串，而memcpy可以复制任意内容，例如字符数组、整型、结构体、类等。</li>
+<li>复制的方法不同。strcpy不需要指定长度，它遇到被复制字符的串结束符”\0”才结束，所以容易溢出。memcpy则是根据其第3个参数决定复制的长度。</li>
+<li>用途不同。通常在复制字符串时用strcpy，而需要复制其他类型数据时则一般用memcpy</li>
+</ol>
+<h2 id="动态创建数组"><a href="#动态创建数组" class="headerlink" title="动态创建数组"></a>动态创建数组</h2><p>在编译期间不需要知道数组的长度，运行时才确定，分配在堆中。分配：<code>int *p = new int[10];</code>，释放：<code>delete [] p;</code>。</p>
+<p>new和delete搭配，new []和delete []搭配使用。</p>
+<p>执行delete p以后，p执行的内存已经被释放，为了防止悬垂指针，要重设指针的值（p = 0）。</p>
+<h2 id="自增-i和i"><a href="#自增-i和i" class="headerlink" title="自增++i和i++"></a>自增++i和i++</h2><p>建议只在必要时才使用后置操作符，多使用前置操作符，不会造成性能的损失。</p>
+<p>一个优先级问题：<code>*iter++</code>等于<code>*(iter++)</code>，iter++使iter加1，然后返回iter原值的副本作为该表达式的结果。因此，解引用操作<code>*</code>的操作数是iter未加1前的副本。</p>
+<h2 id="显示类型转换"><a href="#显示类型转换" class="headerlink" title="显示类型转换"></a>显示类型转换</h2><p>格式一般为<code>cast-name&lt;type&gt;(expression);</code></p>
+<p><code>static_cast</code>：编译器隐式执行的任何类型转换都可以由 static_cast 显式完成。当需要将一个较大的算术类型赋值给较小的类型时，使用强制转换非常有用。此时，强制类型转换告诉程序的读者和编译器：我们知道并且不关心潜在的精度损失。</p>
+<p><code>dynamic_cast</code>：支持运行时识别指针或引用所指向的对象，将一个基类对象指针（或引用）cast到继承类指针，dynamic_cast会根据基类指针是否真正指向继承类指针来做相应处理。注意：基类对象若没有虚函数，会编译出错。</p>
+<p><code>const_cast</code>：转换掉表达式的const属性。</p>
+<p><code>reinterpret_cast</code>：通常为操作数的位模式提供较低层次的重新解释。</p>
+<h2 id="内联函数的理解"><a href="#内联函数的理解" class="headerlink" title="内联函数的理解"></a>内联函数的理解</h2><p>内联机制适用于优化小的、只有几行的而且经常被调用的函数；</p>
+<p>内联对于编译器来说只是一个建议，编译器可以选择忽略这个建议；</p>
+<p>内联的原理：编译器通过使用函数的定义体来替代函数调用语句，在编译阶段执行；</p>
+<p>内联函数通过避免函数调用所带来的开销来提高你程序的运行速度；</p>
+<p>因为代码的扩展，内联函数增大了可执行程序的体积。</p>
+<h2 id="const和define宏"><a href="#const和define宏" class="headerlink" title="const和define宏"></a>const和define宏</h2><ul>
+<li>define：在预处理阶段进行替换</li>
+<li>const：在编译时确定其值</li>
+<li>define：无类型，不进行类型安全检查，可能会产生意想不到的错误</li>
+<li>const：有数据类型，编译时会进行类型检查</li>
+<li>define：不分配内存，给出的是立即数，有多少次使用就进行多少次替换，在内存中会有多个拷贝，消耗内存大</li>
+<li>const：在静态存储区中分配空间，在程序运行过程中内存中只有一个拷贝</li>
+</ul>
+<h2 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h2><p>具有相同的名字而形参表不同（形参类型和个数）</p>
+<p>对于const形参：仅当形参是引用或指针时，形参是否为 const 才有影响。</p>
+<h2 id="顺序容器"><a href="#顺序容器" class="headerlink" title="顺序容器"></a>顺序容器</h2><p>vector list deque</p>
+<p>stack queue priority_queue</p>
+<p>迭代器：只有random access迭代器才指出<code>+=</code>，比如vector deque string；而list set map是bidiretional迭代器。支持<code>++</code>和<code>--</code>。</p>
+<h2 id="序列容器"><a href="#序列容器" class="headerlink" title="序列容器"></a>序列容器</h2><p><code>map</code> <code>set</code>：底层用R-B tree使用</p>
+<p><code>multimap</code> <code>multiset</code>(不常用)：Key值可以重复</p>
+<p><code>unordered_map</code> <code>unordered_set</code> (C++ 11)：底层用hash table实现</p>
+<h2 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h2><p>struct，class，union都存在内存对齐。</p>
+<p>对于空的<code>class A { };</code>，sizeof(A) = 1`。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">B</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">char</span> b;</span><br><span class="line">    <span class="keyword">short</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">C</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">char</span> a;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">    <span class="keyword">short</span> c;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>sizeof(B) = 8</code>，<code>sizeof(C) = 12</code>。</p>
+<p>对齐规则：</p>
+<ul>
+<li>第一个数据成员放在offset为0的地方，以后每个数据成员的对齐按照<code>#pragma pack</code>指定的数值和这个数据成员自身长度中，比较小的那个进行。</li>
+<li>在数据成员完成各自对齐之后，类(结构或联合)本身也要进行对齐，对齐将按照<code>#pragma pack</code>指定的数值和结构(或联合)最大数据成员长度中，比较小的那个进行。</li>
+<li>若<code>#pragma pack</code>未指定，则最后按照以结构体中最长的成员的长度来对齐。</li>
+</ul>
+<h2 id="static关键字"><a href="#static关键字" class="headerlink" title="static关键字"></a>static关键字</h2><p>对于函数内部的static变量，也就是静态局部变量，只在第一次调用时执行初始化，始终驻留在全局区内，直到程序运行结束。静态局部变量一般在声明处初始化，如果没有显式初始化，会被程序自动初始化为0(局部变量不会被初始化)。比如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">plus_va</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> va = <span class="number">0</span>;</span><br><span class="line">    va += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; va &lt;&lt; <span class="string">", "</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i)</span><br><span class="line">    plus_va();</span><br></pre></td></tr></table></figure>
+
+<p>这段代码任然会输出1到10，也就是说<code>va = 0</code>实际上就执行了第一次。</p>
+<p>对于static函数，只在当前文件可见，不能被其他文件使用。</p>
+<p>对于类的静态成员来说，无论这个类的对象被定义了多少个，静态数据成员在程序中也只有一份拷贝，由该类型的所有对象共享访问。static 成员遵循常规访问控制：如果成员在基类中为 private，则派生类不能访问它。</p>
+<p>静态成员变量要通过类名来访问。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">get_va</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> va; &#125;</span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> va;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 静态成员变量的初始化</span></span><br><span class="line"><span class="keyword">int</span> MyClass::va = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 访问静态成员函数</span></span><br><span class="line">MyClass:: get_va()</span><br></pre></td></tr></table></figure>
+
+<p>对于static成员函数，它没有this指针，也不能访问类的非静态成员和非静态成员函数。</p>
+<h2 id="枚举变量"><a href="#枚举变量" class="headerlink" title="枚举变量"></a>枚举变量</h2><p>默认地，第一个枚举成员赋值为 0，后面的每个枚举成员赋的值比前面的大1。比如有：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// point2d is 2, point2w is 3, point3d is 3, point3w is 4</span></span><br><span class="line"><span class="keyword">enum</span> Points &#123; point2d = <span class="number">2</span>, point2w, point3d = <span class="number">3</span>, point3w &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>枚举成员point2d显式初始化为2。下一个枚举成员point2w默认初始化，即它的值比前一枚举成员的值大1。因此point2w初始化为3。枚举成员point3 显式初始化为3。一样，point3w默认初始化，结果为4。</p>
+<h2 id="class和struct"><a href="#class和struct" class="headerlink" title="class和struct"></a>class和struct</h2><p>在C++里面，用class和struct关键字定义类的唯一差别在于默认访问级别：默认情况下，struct的成员为public，而class的成员为private。</p>
+<h2 id="C和C-区别和联系"><a href="#C和C-区别和联系" class="headerlink" title="C和C++区别和联系"></a>C和C++区别和联系</h2><p>C++是C的一个超集，C++在C的基础上添加了面向对象（object oriented），模板（template）和STL。</p>
+<h2 id="关键字explicit"><a href="#关键字explicit" class="headerlink" title="关键字explicit"></a>关键字explicit</h2><p>explicit的作用就是防止类构造函数的隐式自动转换，但是只能用于修饰只有一个参数的类构造函数, 用来表明该构造函数是显示的。比如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    A() : x(<span class="number">0</span>) &#123;&#125;</span><br><span class="line">    A(<span class="keyword">int</span> x) : x(x) &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>我们这样调用是合法的<code>A a = 5</code>，因为编译器会根据第二个构造函数自动把整形转换为A类对象。如果我们加上了<code>explicit</code>，那么编译器就不再会我们做隐式转换。</p>
+<h2 id="new和malloc区别"><a href="#new和malloc区别" class="headerlink" title="new和malloc区别"></a>new和malloc区别</h2><p>new操作符内存分配成功时，返回的是对象类型的指针，类型严格与对象匹配，无须进行类型转换。而malloc内存分配成功则是返回void *，需要通过强制类型转换将void*指针转换成我们需要的类型。</p>
+<p>new内存分配失败时，会抛出bac_alloc异常，它不会返回NULL；malloc分配内存失败时返回NULL。</p>
+<p>使用new操作符申请内存分配时无须指定内存块的大小，编译器会根据类型信息自行计算，而malloc则需要显式地指出所需内存的尺寸。</p>
+<p>new/delete会调用对象的构造函数/析构函数以完成对象的构造/析构，而malloc则不会。</p>
+<p>C++提供了new[]与delete[]来专门处理数组类型，new对数组的支持体现在它会分别调用构造函数初始化每一个数组元素，释放对象时为每个对象调用析构函数。</p>
+<p>opeartor new /operator delete可以被重载，而malloc/free不允许。</p>
+<p>使用malloc分配的内存后，如果在使用过程中发现内存不足，可以使用realloc函数进行内存重新分配实现内存的扩充，而new没有这样直观的配套设施来扩充内存。</p>
+<h2 id="编译和运行"><a href="#编译和运行" class="headerlink" title="编译和运行"></a>编译和运行</h2><ul>
+<li>预编译主要展开包含的头文件，宏定义<code>#define</code>，条件编译如<code>#ifdef</code>，<code>#ifndef</code>等操作。</li>
+<li>编译期是指把你的源程序交给编译器编译的过程，包括预编译，编译，汇编三个阶段，然后得到.obj文件，链接后生成可执行文件。</li>
+<li>运行期指的是你将可执行文件交给操作系统（输入文件名，回车）执行、直到程序执行结束。</li>
+</ul>
+<p>运行期多态的实现依赖于虚函数机制。对模板参数而言，多态是通过模板具现化和函数重载解析实现的，以不同的模板参数具现化导致调用不同的函数，这就是所谓的编译期多态。</p>
+<p>参考：<a href="http://www.cnblogs.com/acSzz/p/5743789.html" target="_blank" rel="noopener">http://www.cnblogs.com/acSzz/p/5743789.html</a></p>
+<h2 id="符号扩展"><a href="#符号扩展" class="headerlink" title="符号扩展"></a>符号扩展</h2><p>将无符号数转换为一个更大的数据类型，我们只需要简单地在开头添加0，这种称为零扩展；</p>
+<p>将一个补码数字转换成一个更大的数据类型可以执行符号扩展，规则就是添加最高有效位的值的副本（正数为0，赋值为1）；</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x1 = <span class="number">-2</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> y1 = <span class="keyword">static_cast</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">int</span>&gt;(x1);</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; hex &lt;&lt; x1 &lt;&lt; <span class="string">", "</span> &lt;&lt; y1 &lt;&lt; <span class="built_in">endl</span>; <span class="comment">// fffffffe, fffffffe</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x2 = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> y2 = <span class="keyword">static_cast</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">int</span>&gt;(x2);</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; hex &lt;&lt; x2 &lt;&lt; <span class="string">", "</span> &lt;&lt; y2 &lt;&lt; <span class="built_in">endl</span>; <span class="comment">// 00000002, 00000002</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="关键字extern"><a href="#关键字extern" class="headerlink" title="关键字extern"></a>关键字extern</h2><p>extern，可置于变量或者函数前，以表示变量或者函数的定义在别的文件中。提示编译器遇到此变量或函数时，在其它模块中寻找其定义。</p>
+<p>extern “C”用于函数前，告诉编译器在编译这个函数名时按着C的规则去翻译相应的函数名而不是C++的。</p>
+<h2 id="typename"><a href="#typename" class="headerlink" title="typename"></a>typename</h2><p>用于声明类型参数时，和class的意义是一样的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>, <span class="title">typename</span> <span class="title">U</span>&gt; <span class="title">class</span> <span class="title">Widget</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>typename</code>还可以标识嵌套从属类型名称：比如使用迭代器作为参数时</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">typename</span> <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator iter)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="内存泄漏检测"><a href="#内存泄漏检测" class="headerlink" title="内存泄漏检测"></a>内存泄漏检测</h2><p>VS中，添加头文件<code>crtdbg.h</code>，代码中加入_CrtDumpMemoryLeaks()；按下F5即可显示</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/12/find-Ks-binary-search/" rel="next" title="二分查找的一个应用">
+                <i class="fa fa-chevron-left"></i> 二分查找的一个应用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/25/summary-of-linkedlist/" rel="prev" title="单链表single linked list的一些总结">
+                单链表single linked list的一些总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">Klaus Guan</p>
+  <div class="site-description motion-element" itemprop="description">Move on</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#字符数组"><span class="nav-number">1.</span> <span class="nav-text">字符数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#char-p-5-和char-p-5-区别"><span class="nav-number">2.</span> <span class="nav-text">char *p[5]和char (*p)[5]区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指针和引用的区别"><span class="nav-number">3.</span> <span class="nav-text">指针和引用的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区别a-1和-amp-a-1"><span class="nav-number">4.</span> <span class="nav-text">区别a+1和(&amp;a)+1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#size-t和ptrdiff-t"><span class="nav-number">5.</span> <span class="nav-text">size_t和ptrdiff_t</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#const和指针"><span class="nav-number">6.</span> <span class="nav-text">const和指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指针函数"><span class="nav-number">7.</span> <span class="nav-text">指针函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数指针"><span class="nav-number">8.</span> <span class="nav-text">函数指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sizeof"><span class="nav-number">9.</span> <span class="nav-text">sizeof</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现strcpy"><span class="nav-number">10.</span> <span class="nav-text">实现strcpy()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现memcpy"><span class="nav-number">11.</span> <span class="nav-text">实现memcpy()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态创建数组"><span class="nav-number">12.</span> <span class="nav-text">动态创建数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自增-i和i"><span class="nav-number">13.</span> <span class="nav-text">自增++i和i++</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示类型转换"><span class="nav-number">14.</span> <span class="nav-text">显示类型转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内联函数的理解"><span class="nav-number">15.</span> <span class="nav-text">内联函数的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#const和define宏"><span class="nav-number">16.</span> <span class="nav-text">const和define宏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数重载"><span class="nav-number">17.</span> <span class="nav-text">函数重载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序容器"><span class="nav-number">18.</span> <span class="nav-text">顺序容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列容器"><span class="nav-number">19.</span> <span class="nav-text">序列容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存对齐"><span class="nav-number">20.</span> <span class="nav-text">内存对齐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#static关键字"><span class="nav-number">21.</span> <span class="nav-text">static关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#枚举变量"><span class="nav-number">22.</span> <span class="nav-text">枚举变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#class和struct"><span class="nav-number">23.</span> <span class="nav-text">class和struct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C和C-区别和联系"><span class="nav-number">24.</span> <span class="nav-text">C和C++区别和联系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关键字explicit"><span class="nav-number">25.</span> <span class="nav-text">关键字explicit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#new和malloc区别"><span class="nav-number">26.</span> <span class="nav-text">new和malloc区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译和运行"><span class="nav-number">27.</span> <span class="nav-text">编译和运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#符号扩展"><span class="nav-number">28.</span> <span class="nav-text">符号扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关键字extern"><span class="nav-number">29.</span> <span class="nav-text">关键字extern</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#typename"><span class="nav-number">30.</span> <span class="nav-text">typename</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存泄漏检测"><span class="nav-number">31.</span> <span class="nav-text">内存泄漏检测</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Klaus Guan</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
