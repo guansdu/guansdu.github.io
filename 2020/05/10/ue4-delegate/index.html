@@ -99,7 +99,7 @@
 <meta property="og:site_name" content="klaus&#39;s blog">
 <meta property="og:description" content="Unreal里面Delegate机制还是挺有意思的，看下源码学习学习。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-05-18T14:14:43.666Z">
+<meta property="og:updated_time" content="2020-05-18T14:38:17.913Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UE4 Delegate源码分析">
 <meta name="twitter:description" content="Unreal里面Delegate机制还是挺有意思的，看下源码学习学习。">
@@ -403,7 +403,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-05-18 22:14:43" itemprop="dateModified" datetime="2020-05-18T22:14:43+08:00">2020-05-18</time>
+                <time title="Modified: 2020-05-18 22:38:17" itemprop="dateModified" datetime="2020-05-18T22:38:17+08:00">2020-05-18</time>
               </span>
             
           
@@ -460,8 +460,13 @@
         <p>Unreal里面Delegate机制还是挺有意思的，看下源码学习学习。<a id="more"></a></p>
 <p>其实委托机制的本质并不复杂，就是我们之前学过的观察者模式，也可以说是订阅-发布模式。常常可用于模块之间的解耦，在整个Unreal的源码里面应用是非常广泛的。</p>
 <p>UE4里面的的Delegate常用的几种宏：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_DELEGATE( DelegateName ) FUNC_DECLARE_DELEGATE( DelegateName, void )</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_MULTICAST_DELEGATE( DelegateName ) ...</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_EVENT( OwningType, EventName ) ...</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_DYNAMIC_DELEGATE( DelegateName ) ...</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_DYNAMIC_MULTICAST_DELEGATE( DelegateName ) ...</span></span><br></pre></td></tr></table></figure>
-
+<ul>
+<li>DECLARE_DELEGATE( DelegateName ) …</li>
+<li>DECLARE_MULTICAST_DELEGATE( DelegateName ) …</li>
+<li>DECLARE_EVENT( OwningType, EventName ) …</li>
+<li>DECLARE_DYNAMIC_DELEGATE( DelegateName ) …</li>
+<li>DECLARE_DYNAMIC_MULTICAST_DELEGATE( DelegateName ) …</li>
+</ul>
 <p>带Dynamic的实现比较复杂，它可以被序列化、暴露给蓝图使用，走的是UObject那一套。</p>
 <p>在<code>DelegateCombinations.h</code>里面还定义了很多带参数的Delegate，方便我们直接使用。</p>
 
@@ -516,6 +521,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/18/cpp-metaprogramming-1/" rel="prev" title="C++模板元编程初探（一）">
+                C++模板元编程初探（一） <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -576,7 +585,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-count">81</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -696,7 +705,9 @@
         
           
         
-        <span class="site-state-item-count">31</span>
+          
+        
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">tags</span>
         </a>
       </div>
