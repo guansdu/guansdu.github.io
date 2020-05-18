@@ -99,7 +99,7 @@
 <meta property="og:site_name" content="klaus&#39;s blog">
 <meta property="og:description" content="Unreal里面Delegate机制还是挺有意思的，看下源码学习学习。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-05-10T15:34:26.781Z">
+<meta property="og:updated_time" content="2020-05-18T14:14:43.666Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UE4 Delegate源码分析">
 <meta name="twitter:description" content="Unreal里面Delegate机制还是挺有意思的，看下源码学习学习。">
@@ -388,13 +388,23 @@
                 
               
 
-              <time title="Created: 2020-05-10 23:15:26 / Modified: 23:34:26" itemprop="dateCreated datePublished" datetime="2020-05-10T23:15:26+08:00">2020-05-10</time>
+              <time title="Created: 2020-05-10 23:15:26" itemprop="dateCreated datePublished" datetime="2020-05-10T23:15:26+08:00">2020-05-10</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2020-05-18 22:14:43" itemprop="dateModified" datetime="2020-05-18T22:14:43+08:00">2020-05-18</time>
+              </span>
             
           
 
@@ -448,7 +458,13 @@
 
       
         <p>Unreal里面Delegate机制还是挺有意思的，看下源码学习学习。<a id="more"></a></p>
-<h1 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h1>
+<p>其实委托机制的本质并不复杂，就是我们之前学过的观察者模式，也可以说是订阅-发布模式。常常可用于模块之间的解耦，在整个Unreal的源码里面应用是非常广泛的。</p>
+<p>UE4里面的的Delegate常用的几种宏：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_DELEGATE( DelegateName ) FUNC_DECLARE_DELEGATE( DelegateName, void )</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_MULTICAST_DELEGATE( DelegateName ) ...</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_EVENT( OwningType, EventName ) ...</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_DYNAMIC_DELEGATE( DelegateName ) ...</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_DYNAMIC_MULTICAST_DELEGATE( DelegateName ) ...</span></span><br></pre></td></tr></table></figure>
+
+<p>带Dynamic的实现比较复杂，它可以被序列化、暴露给蓝图使用，走的是UObject那一套。</p>
+<p>在<code>DelegateCombinations.h</code>里面还定义了很多带参数的Delegate，方便我们直接使用。</p>
+
       
     </div>
 
@@ -543,17 +559,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <div class="site-overview-wrap sidebar-panel">
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
 
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -713,23 +720,6 @@
         </div>
       </div>
 
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#代码结构"><span class="nav-number">1.</span> <span class="nav-text">代码结构</span></a></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
       
 
       
