@@ -91,18 +91,18 @@
   };
 </script>
 
-  <meta name="description" content="本文用来记录一些数据库相关的基础知识。">
-<meta name="keywords" content="Database">
+  <meta name="description" content="一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
+<meta name="keywords" content="C++,Template">
 <meta property="og:type" content="article">
-<meta property="og:title" content="数据库基础复习总结">
-<meta property="og:url" content="http://yoursite.com/2017/08/01/database-review/index.html">
+<meta property="og:title" content="模板元编程之std::enable_if">
+<meta property="og:url" content="http://yoursite.com/2020/06/01/about-enable-if/index.html">
 <meta property="og:site_name" content="klaus&#39;s blog">
-<meta property="og:description" content="本文用来记录一些数据库相关的基础知识。">
+<meta property="og:description" content="一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-09-13T01:25:51.346Z">
+<meta property="og:updated_time" content="2020-06-01T14:39:30.913Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="数据库基础复习总结">
-<meta name="twitter:description" content="本文用来记录一些数据库相关的基础知识。">
+<meta name="twitter:title" content="模板元编程之std::enable_if">
+<meta name="twitter:description" content="一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
 
 
 
@@ -110,7 +110,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/2017/08/01/database-review/">
+  <link rel="canonical" href="http://yoursite.com/2020/06/01/about-enable-if/">
 
 
 
@@ -121,7 +121,7 @@
 </script>
 
   
-  <title>数据库基础复习总结 | klaus's blog</title>
+  <title>模板元编程之std::enable_if | klaus's blog</title>
   
 
 
@@ -363,7 +363,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/01/database-review/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/01/about-enable-if/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Klaus Guan">
@@ -380,7 +380,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">数据库基础复习总结
+          <h1 class="post-title" itemprop="name headline">模板元编程之std::enable_if
 
               
             
@@ -406,23 +406,13 @@
                 
               
 
-              <time title="Created: 2017-08-01 14:59:28" itemprop="dateCreated datePublished" datetime="2017-08-01T14:59:28+08:00">2017-08-01</time>
+              <time title="Created: 2020-06-01 22:34:50 / Modified: 22:39:30" itemprop="dateCreated datePublished" datetime="2020-06-01T22:34:50+08:00">2020-06-01</time>
             </span>
           
 
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2017-09-13 09:25:51" itemprop="dateModified" datetime="2017-09-13T09:25:51+08:00">2017-09-13</time>
-              </span>
             
           
 
@@ -435,7 +425,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Database/" itemprop="url" rel="index"><span itemprop="name">Database</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a></span>
 
                 
                 
@@ -475,121 +465,7 @@
       
 
       
-        <p>本文用来记录一些数据库相关的基础知识。<a id="more"></a></p>
-<h3 id="数据库-模型"><a href="#数据库-模型" class="headerlink" title="数据库 模型"></a>数据库 模型</h3><ul>
-<li>关系模型：关系数据模型是以集合论中的关系概念为基础发展起来的。关系模型中无论是实体还是实体间的联系均由单一的结构类型–关系来表示。在实际的关系数据库中的关系也称表。一个关系数据库就是由若干个表组成。</li>
-<li>层次模型：用树型（层次）结构表示实体类型及实体间联系的数据模型称为层次模型。</li>
-<li>网状模型：用网络结构表示实体类型及其实体之间联系的模型。顾名思义，一个事物和另外的几个都有联系，这样构成一张网状图。</li>
-</ul>
-<h3 id="数据库-事务"><a href="#数据库-事务" class="headerlink" title="数据库 事务"></a>数据库 事务</h3><p>特性：</p>
-<ul>
-<li>原子性：事务必须是原子工作单元；对于其数据修改，要么全都执行，要么全都不执行。</li>
-<li>一致性：事务在完成时，必须使所有的数据都保持一致状态。在相关数据库中，所有规则都必须应用于事务的修改，以保持所有数据的完整性。</li>
-<li>隔离性：由并发事务所作的修改必须与任何其它并发事务所作的修改隔离。事务查看数据时数据所处的状态，要么是另一并发事务修改它之前的状态，要么是另一事务修改它之后的状态，事务不会查看中间状态的数据。</li>
-<li>持久性：事务完成之后，它对于系统的影响是永久性的。该修改即使出现致命的系统故障也将一直保持。</li>
-</ul>
-<h3 id="完整性约束"><a href="#完整性约束" class="headerlink" title="完整性约束"></a>完整性约束</h3><ul>
-<li>域完整性：是指表中的列必须满足某种特定的数据类型约束，其中约束又包括取值范围、精度等规定。</li>
-<li>实体完整性：关系的主关键字不能重复也不能取空值</li>
-<li>参照完整性：是定义建立关系之间联系的主关键字与外部关键字引用的约束条件</li>
-<li>用户自定义完整性：不同的关系数据库系统根据其应用环境的不同，往往还需要一些特殊的约束条件。用户定义的完整性即是针对某个特定关系数据库的约束条件，它反映某一具体应用必须满足的语义要求。</li>
-</ul>
-<h3 id="数据库三级模式"><a href="#数据库三级模式" class="headerlink" title="数据库三级模式"></a>数据库三级模式</h3><ul>
-<li>外模式：外模式又称子模式或用户模式，对应于用户级。它是某个或某几个用户所看到的数据库的数据视图，是与某一应用有关的数据的逻辑表示。用户可以通过外模式描述语言来描述、定义对应于用户的数据记录(外模式)，也可以利用数据操纵语(Data Manipulation Language，DML)对这些数据记录进行操作。外模式反映了数据库的用户观。</li>
-<li>概念模式：又称概念模式或逻辑模式，对应于概念级。它是由数据库设计者综合所有用户的数据，按照统一的观点构造的全局逻辑结构，是对数据库中全部数据的逻辑结构和特征的总体描述，是所有用户的公共数据视图(全局视图)。它是由数据库管理系统提供的数据模式描述语言(Data Description Language，DDL)来描述、定义的，体现、反映了数据库系统的整体观。</li>
-<li>内模式：内模式又称存储模式，对应于物理级，它是数据库中全体数据的内部表示或底层描述，是数据库最低一级的逻辑描述，它描述了数据在存储介质上的存储方式和物理结构，对应着实际存储在外存储介质上的数据库。</li>
-</ul>
-<h3 id="数据库-视图"><a href="#数据库-视图" class="headerlink" title="数据库 视图"></a>数据库 视图</h3><p>视图（View）是从一个或多个表（或视图）导出的表。视图与表（有时为与视图区别，也称表为基本表——Base Table）不同，视图是一个虚表，即视图所对应的数据不进行实际存储，数据库中只存储视图的定义，在对视图的数据进行操作时，系统根据视图的定义去操作与视图相关联的基本表。</p>
-<p>作用：简单性。看到的就是需要的。视图不仅可以简化用户对数据的理解，也可以简化他们的操作。那些被经常使用的查询可以被定义为视图，从而使得用户不必为以后的操作每次指定全部的条件。安全性。通过视图用户只能查询和修改他们所能见到的数据。数据库中的其它数据则既看不见也取不到，通过视图，用户可以被限制在数据的不同子集上。</p>
-<p>如果视图定义中有如下子句则不能更新：</p>
-<p>1.分组 使用group by 和 Having<br>2.联结（选项B）<br>3.子查询<br>4.并集<br>5.聚集函数 MAX MIN COUNT AVG（选项A）<br>6.DISTINCT（选项D）<br>7.导出列</p>
-<h3 id="数据库-索引"><a href="#数据库-索引" class="headerlink" title="数据库 索引"></a>数据库 索引</h3><p>索引是对数据库表中一列或多列的值进行排序的一种结构，使用索引可快速访问数据库表中的特定信息。</p>
-<p>为表设置索引要付出代价的：一是增加了数据库的存储空间，二是在插入和修改数据时要花费较多的时间(因为索引也要随之变动)。</p>
-<p>索引的实现通常使用B树及其变种B+树。</p>
-<p>B树定义：（来自算法导论第18章）</p>
-<ul>
-<li>每个结点x有以下域：<ol>
-<li>n，当前存存储在结点x中的关键字数。</li>
-<li>n个关键字本身，以非降序存放，因此key[1] &lt;= key[2] &lt;= … &lt;= key[n]。</li>
-<li>leaf[x]，是一个bool值，如果x是叶子节点则为true，如果x为内结点，则false。</li>
-</ol>
-</li>
-<li>每个结点x还包含n+1个指向其子女的指针，p[1]，p[2]，···，p[n+1]；</li>
-<li>各个关键字key[n]对各子树的关键字范围加以划分，如果k[i]是存储在以p[i]为根的子树中的关键字，那么有：k[1] &lt;= key[1] &lt;= k[2] &lt;= key[2] &lt;= ··· &lt;= key[n] &lt;= k[n+1]。</li>
-<li>每个叶子节点的深度相同，都是树的高度h。</li>
-<li>每个结点能包含的关键字都有一个上界和下界。每个非根的内结点最少有t个子女（t&gt;=2），每个非根的内结点至少有t-1个关键字；每个结点可包含最多2t-1个关键字。</li>
-</ul>
-<p>B+树与B树不同点在于：</p>
-<ul>
-<li>非叶子结点的子树指针与关键字个数相同；</li>
-<li>非叶子结点的子树指针p[i]，指向关键字值属于[k[i], k[i+1])的子树；</li>
-<li>为所有叶子结点增加一个链指针；</li>
-<li>所有关键字都在叶子结点出现；</li>
-</ul>
-<p>此外：B+树只有达到叶子结点才命中（B-树可以在非叶子结点命中）。</p>
-<p>B+树优点：（更适合操作系统的文件索引和数据库索引）</p>
-<ul>
-<li>由于B+树在内部节点上不包含数据信息，因此在内存页中能够存放更多的key。 数据存放的更加紧密，具有更好的空间局部性。因此访问叶子节点上关联的数据也具有更好的缓存命中率。</li>
-<li>B+树的叶子结点都是相链的，因此对整棵树的遍历只需要一次线性遍历叶子结点即可。而且由于数据顺序排列并且相连，所以便于区间查找和搜索。而B树则需要进行每一层的递归遍历。相邻的元素可能在内存中不相邻，所以缓存命中性没有B+树好。</li>
-</ul>
-<p>索引种类：</p>
-<ul>
-<li>唯一索引：唯一索引是不允许其中任何两行具有相同索引值的索引。当现有数据中存在重复的键值时，大多数数据库不允许将新创建的唯一索引与表一起保存。数据库还可能防止添加将在表中创建重复键值的新数据。例如，如果在employee表中职员的姓(lname)上创建了唯一索引，则任何两个员工都不能同姓。</li>
-<li>主键索引：数据库表经常有一列或多列组合，其值唯一标识表中的每一行。该列称为表的主键。在数据库关系图中为表定义主键将自动创建主键索引，主键索引是唯一索引的特定类型。该索引要求主键中的每个值都唯一。当在查询中使用主键索引时，它还允许对数据的快速访问。</li>
-<li>聚集索引： 在聚集索引中，表中行的物理顺序与键值的逻辑（索引）顺序相同（就是说B+树中的叶子节点就是数据结点）。一个表只能包含一个聚集索引。如果某索引不是聚集索引，则表中行的物理顺序与键值的逻辑顺序不匹配。与非聚集索引相比，聚集索引通常提供更快的数据访问速度。对于频繁更新和修改的列不适合简历聚集索引。</li>
-<li>非聚集索引：索引中索引的逻辑顺序与磁盘上行的物理存储顺序不同。（B+树中的叶子节点不包含数据页，而是一个指针指向具体的数据）</li>
-</ul>
-<h3 id="脏读-幻读-不可重复读"><a href="#脏读-幻读-不可重复读" class="headerlink" title="脏读 幻读 不可重复读"></a>脏读 幻读 不可重复读</h3><p>数据库锁：实现并发控制，保证多个用户操控同一数据库时不发生数据不一致现象。</p>
-<p>脏读：脏读就是指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。</p>
-<blockquote>
-<pre><code>事务1：更新一条数据
-----&gt;事务2：读取事务1更新的记录
-事务1：调用commit进行提交</code></pre></blockquote>
-<p>幻读：同一事务中，用同样的操作读取两次，得到的记录数不相同。</p>
-<blockquote>
-<pre><code>事务1：查询表中所有记录
-----&gt;事务2：插入一条记录
-----&gt;事务2：调用commit进行提交
-事务1：再次查询表中所有记录</code></pre></blockquote>
-<p>不可重复读：在同一事务中，两次读取同一数据，得到内容不同。在这个事务还没有结束时，另外一个事务也访问该同一数据。那么，在第一个事务中的两次读数据之间，由于第二个事务的修改，那么第一个事务两次读到的的数据可能是不一样的。这样就发生了在一个事务内两次读到的数据是不一样的，因此称为是不可重复读。</p>
-<blockquote>
-<pre><code>事务1：查询一条记录
-----&gt;事务2：更新事务1查询的记录
-----&gt;事务2：调用commit进行提交
-事务1：再次查询上次的记录</code></pre></blockquote>
-<p>读取数据时加共享锁，写数据时加排他锁，都是事务提交才释放锁。读取时候不允许其他事物修改该数据，不管数据在事务过程中读取多少次，数据都是一致的，避免了不可重复读问题。</p>
-<h3 id="MYSQL数据引擎"><a href="#MYSQL数据引擎" class="headerlink" title="MYSQL数据引擎"></a>MYSQL数据引擎</h3><p><strong>MyISAM引擎</strong>：它是MYSQL的默认引擎，但不提供事务的支持，也不支持行级锁和外键。因此当执行Insert插入和Update更新语句时，即执行写操作的时候需要锁定这个表。所以会导致效率会降低。不过和Innodb不同的是，MyIASM引擎是保存了表的行数，于是当进行Select count(*) from table语句时，可以直接的读取已经保存的值而不需要进行扫描全表。所以，如果表的读操作远远多于写操作时，并且不需要事务的支持的，可以将MyIASM作为数据库引擎的首先。</p>
-<p>MyISAM引擎的索引结构为<strong>B+Tree</strong>，中B+Tree的数据域存储的内容为实际数据的地址，也就是说它的索引和实际的数据是分开的，只不过是用索引指向了实际的数据，这种索引就是所谓的<strong>非聚集索引</strong>。</p>
-<p><strong>Innodb引擎</strong>：Innodb引擎提供了对数据库ACID事务的支持。并且还提供了行级锁和外键的约束。它的设计的目标就是处理大数据容量的数据库系统。它本身实际上是基于MYSQL后台的完整的系统。MYSQL运行的时候，Innodb会在内存中建立缓冲池，用于缓冲数据和索引。但是，该引擎是不支持全文搜索的。同时，启动也比较的慢，它是不会保存表的行数的。当进行Select count(*) from table指令的时候，需要进行扫描全表。所以当需要使用数据库的事务时，该引擎就是首选。由于锁的粒度小，写操作是不会锁定全表的。所以在并发度较高的场景下使用会提升效率的。</p>
-<p>Innodb的索引文件本身就是数据文件，即<strong>B+Tree</strong>的数据域存储的就是实际的数据，这种索引就是<strong>聚集索引</strong>。</p>
-<p>大容量的数据集时趋向于选择Innodb。因为它支持事务处理和故障的恢复。Innodb可以利用数据日志来进行数据的恢复。主键的查询在Innodb也是比较快的。</p>
-<p>大批量的插入语句时（这里是INSERT语句）在MyIASM引擎中执行的比较的快，但是UPDATE语句在Innodb下执行的会比较的快，尤其是在并发量大的时候。</p>
-<h3 id="MYSQL事务隔离级别"><a href="#MYSQL事务隔离级别" class="headerlink" title="MYSQL事务隔离级别"></a>MYSQL事务隔离级别</h3><p>MYSQL数据库为我们提供的四种隔离级别：</p>
-<ol>
-<li>Serializable (串行化)：可避免脏读、不可重复读、幻读的发生。</li>
-<li>Repeatable read (可重复读)：可避免脏读、不可重复读的发生。</li>
-<li>Read committed (读已提交)：可避免脏读的发生。</li>
-<li>Read uncommitted (读未提交)：最低级别，任何情况都无法保证。</li>
-</ol>
-<p>在MySQL数据库中默认的隔离级别为Repeatable read (可重复读)。</p>
-<p>查看当前事物隔离级别：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> @@tx_isolation;</span><br></pre></td></tr></table></figure>
-
-<p>设置隔离级别：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>  [glogal | <span class="keyword">session</span>]  <span class="keyword">transaction</span> <span class="keyword">isolation</span> <span class="keyword">level</span> <span class="string">'隔离级别名称'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> tx_isolation = <span class="string">'隔离级别名称'</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="MYSQL锁"><a href="#MYSQL锁" class="headerlink" title="MYSQL锁"></a>MYSQL锁</h3><p>表锁： 开销小，加锁快；不会出现死锁；锁定力度大，发生锁冲突概率高，并发度最低；</p>
-<p>行锁： 开销大，加锁慢；会出现死锁；锁定粒度小，发生锁冲突的概率低，并发度高；</p>
-<p>表级，直接锁定整张表，在你锁定期间，其它进程无法对该表进行写操作。如果你是写锁，则其它进程则读也不允许。</p>
-<p>行级,，仅对指定的记录进行加锁，这样其它进程还是可以对同一个表中的其它记录进行操作。</p>
-<p>MyISAM只支持表锁，有两种模式：表共享读锁（Table Read Lock）和表独占写锁（Table Write Lock）。就是说对MyISAM表进行读操作时，它不会阻塞其他用户对同一表的读请求，但会阻塞 对同一表的写操作；而对MyISAM表的写操作，则会阻塞其他用户对同一表的读和写操作。因此MyISAM表的读和写是串行的，即在进行读操作时不能进行写操作，反之也是一样。</p>
-<p>InnoDB与MyISAM的最大不同有两点：InnoDB支持一是支持事务（TRANSACTION）；二是采用了行级锁。</p>
-<p>InnoDB有两种模式的行锁：</p>
-<ul>
-<li>共享锁：允许一个事务去读一行，阻止其他事务获得相同数据集的排他锁。</li>
-<li>排他锁：允许获得排他锁的事务更新数据，阻止其他事务取得相同数据集的共享读锁和排他写锁。</li>
-</ul>
-<p>注意InnoDB行锁是通过给索引项加锁来实现的，即只有通过索引条件检索数据，InnoDB才使用行级锁，否则将使用表锁。</p>
+        <p>一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了<code>std::enable_if</code>。<a id="more"></a></p>
 
       
     </div>
@@ -620,7 +496,9 @@
         
         <div class="post-tags">
           
-            <a href="/tags/Database/" rel="tag"># Database</a>
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/Template/" rel="tag"># Template</a>
           
         </div>
       
@@ -633,8 +511,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/08/01/computer-networks-review/" rel="next" title="计算机网络基础复习">
-                <i class="fa fa-chevron-left"></i> 计算机网络基础复习
+              <a href="/2020/05/18/cpp-metaprogramming-1/" rel="next" title="模板元编程初探">
+                <i class="fa fa-chevron-left"></i> 模板元编程初探
               </a>
             
           </div>
@@ -642,10 +520,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/08/02/inorder-tree-successor/" rel="prev" title="二叉树中序遍历的前驱和后继">
-                二叉树中序遍历的前驱和后继 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -689,17 +563,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <div class="site-overview-wrap sidebar-panel">
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
 
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -861,23 +726,6 @@
         </div>
       </div>
 
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库-模型"><span class="nav-number">1.</span> <span class="nav-text">数据库 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库-事务"><span class="nav-number">2.</span> <span class="nav-text">数据库 事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整性约束"><span class="nav-number">3.</span> <span class="nav-text">完整性约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库三级模式"><span class="nav-number">4.</span> <span class="nav-text">数据库三级模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库-视图"><span class="nav-number">5.</span> <span class="nav-text">数据库 视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库-索引"><span class="nav-number">6.</span> <span class="nav-text">数据库 索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#脏读-幻读-不可重复读"><span class="nav-number">7.</span> <span class="nav-text">脏读 幻读 不可重复读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MYSQL数据引擎"><span class="nav-number">8.</span> <span class="nav-text">MYSQL数据引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MYSQL事务隔离级别"><span class="nav-number">9.</span> <span class="nav-text">MYSQL事务隔离级别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MYSQL锁"><span class="nav-number">10.</span> <span class="nav-text">MYSQL锁</span></a></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
       
 
       
