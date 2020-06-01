@@ -91,18 +91,18 @@
   };
 </script>
 
-  <meta name="description" content="一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
+  <meta name="description" content="常见的情况就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
 <meta name="keywords" content="C++,Template">
 <meta property="og:type" content="article">
 <meta property="og:title" content="模板元编程之std::enable_if">
 <meta property="og:url" content="http://yoursite.com/2020/06/01/about-enable-if/index.html">
 <meta property="og:site_name" content="klaus&#39;s blog">
-<meta property="og:description" content="一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
+<meta property="og:description" content="常见的情况就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-06-01T14:39:30.913Z">
+<meta property="og:updated_time" content="2020-06-01T15:05:23.082Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="模板元编程之std::enable_if">
-<meta name="twitter:description" content="一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
+<meta name="twitter:description" content="常见的情况就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
 
 
 
@@ -406,7 +406,7 @@
                 
               
 
-              <time title="Created: 2020-06-01 22:34:50 / Modified: 22:39:30" itemprop="dateCreated datePublished" datetime="2020-06-01T22:34:50+08:00">2020-06-01</time>
+              <time title="Created: 2020-06-01 22:34:50 / Modified: 23:05:23" itemprop="dateCreated datePublished" datetime="2020-06-01T22:34:50+08:00">2020-06-01</time>
             </span>
           
 
@@ -465,7 +465,11 @@
       
 
       
-        <p>一种常见的情形就是编译期的条件判断，标准C++ 11里面就提供了<code>std::enable_if</code>。<a id="more"></a></p>
+        <p>常见的情况就是编译期的条件判断，标准C++ 11里面就提供了<code>std::enable_if</code>。<a id="more"></a></p>
+<p><code>std::enable_if</code>的代码实现相当简单：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">bool</span> B, <span class="keyword">typename</span> T = <span class="keyword">void</span>&gt;</span><br><span class="line">struct enable_if </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">typedef</span> T type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">enable_if</span>&lt;false, T&gt; &#123;</span>&#125;; <span class="comment">// no ::type if B==false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">bool</span> B, <span class="keyword">typename</span> T = <span class="keyword">void</span>&gt;</span><br><span class="line"><span class="keyword">using</span> EnableIf = <span class="keyword">typename</span> enable_if&lt;B, T&gt;::type;</span><br></pre></td></tr></table></figure>
+
+<p>关于SFINAE：</p>
 
       
     </div>
