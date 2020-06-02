@@ -99,7 +99,7 @@
 <meta property="og:site_name" content="klaus&#39;s blog">
 <meta property="og:description" content="常见的情况就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-06-01T15:05:23.082Z">
+<meta property="og:updated_time" content="2020-06-02T14:15:04.965Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="模板元编程之std::enable_if">
 <meta name="twitter:description" content="常见的情况就是编译期的条件判断，标准C++ 11里面就提供了std::enable_if。">
@@ -406,13 +406,23 @@
                 
               
 
-              <time title="Created: 2020-06-01 22:34:50 / Modified: 23:05:23" itemprop="dateCreated datePublished" datetime="2020-06-01T22:34:50+08:00">2020-06-01</time>
+              <time title="Created: 2020-06-01 22:34:50" itemprop="dateCreated datePublished" datetime="2020-06-01T22:34:50+08:00">2020-06-01</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2020-06-02 22:15:04" itemprop="dateModified" datetime="2020-06-02T22:15:04+08:00">2020-06-02</time>
+              </span>
             
           
 
@@ -469,7 +479,19 @@
 <p><code>std::enable_if</code>的代码实现相当简单：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">bool</span> B, <span class="keyword">typename</span> T = <span class="keyword">void</span>&gt;</span><br><span class="line">struct enable_if </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">typedef</span> T type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">enable_if</span>&lt;false, T&gt; &#123;</span>&#125;; <span class="comment">// no ::type if B==false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">bool</span> B, <span class="keyword">typename</span> T = <span class="keyword">void</span>&gt;</span><br><span class="line"><span class="keyword">using</span> EnableIf = <span class="keyword">typename</span> enable_if&lt;B, T&gt;::type;</span><br></pre></td></tr></table></figure>
 
-<p>关于SFINAE：</p>
+<p>上面代码的含义就是说如果<code>B</code>是为<strong>true</strong>，那么它会有一个<code>type</code>成员，类型为<code>T</code>。</p>
+<p>关于用法，下面写了一个很简单的对指针取值的操作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="built_in">std</span>::<span class="keyword">enable_if_t</span>&lt;<span class="built_in">std</span>::is_pointer&lt;T&gt;::value&gt; DeRef(<span class="keyword">const</span> T&amp; t)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *t &lt;&lt; <span class="string">".\n"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于<strong>SFINAE</strong>：</p>
+<blockquote>
+<p>In the process of template argument deduction, a C++ compiler attempts to instantiate signatures of a number of candidate overloaded functions to make sure that exactly one overloaded function is available as a perfect match for a given function call.</p>
+</blockquote>
+<blockquote>
+<p>If an invalid argument or return type is formed during the instantiation of a function template, the instantiation is removed from the overload resolution set instead of causing a compilation error. As long as there is one and only one function to which the call can be dispatched, the compiler issues no errors.</p>
+</blockquote>
+<p>编译器在进行模板实例化时会遍历所有的候选项来找到一个最佳匹配，即使出现了无效参数，只要有一个合适的匹配编译器就不会报错。</p>
+<p>参考资料：<br><a href="https://en.cppreference.com/w/cpp/types/enable_if" target="_blank" rel="noopener">https://en.cppreference.com/w/cpp/types/enable_if</a></p>
 
       
     </div>
