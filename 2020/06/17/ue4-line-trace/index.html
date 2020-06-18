@@ -99,7 +99,7 @@
 <meta property="og:site_name" content="klaus&#39;s blog">
 <meta property="og:description" content="碰撞检测的原理实际上就是数学里面的求交运算；">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-06-18T14:49:35.131Z">
+<meta property="og:updated_time" content="2020-06-18T15:42:31.217Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UE4的LineTraceSingle实现原理">
 <meta name="twitter:description" content="碰撞检测的原理实际上就是数学里面的求交运算；">
@@ -421,7 +421,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-06-18 22:49:35" itemprop="dateModified" datetime="2020-06-18T22:49:35+08:00">2020-06-18</time>
+                <time title="Modified: 2020-06-18 23:42:31" itemprop="dateModified" datetime="2020-06-18T23:42:31+08:00">2020-06-18</time>
               </span>
             
           
@@ -477,7 +477,7 @@
       
         <p>碰撞检测的原理实际上就是数学里面的求交运算；<a id="more"></a></p>
 <p>针对Unreal（4.24）里面的源码，可以看<code>SceneQuery.cpp</code>文件：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> FGenericPhysicsInterface::RaycastSingle(<span class="keyword">const</span> UWorld* World, struct FHitResult&amp; OutHit, <span class="keyword">const</span> FVector Start, <span class="keyword">const</span> FVector End, ECollisionChannel TraceChannel, <span class="keyword">const</span> struct FCollisionQueryParams&amp; Params, <span class="keyword">const</span> struct FCollisionResponseParams&amp; ResponseParams, <span class="keyword">const</span> struct FCollisionObjectQueryParams&amp; ObjectParams)</span><br><span class="line">&#123;</span><br><span class="line">	SCOPE_CYCLE_COUNTER(STAT_Collision_SceneQueryTotal);</span><br><span class="line">	SCOPE_CYCLE_COUNTER(STAT_Collision_RaycastSingle);</span><br><span class="line">	CSV_SCOPED_TIMING_STAT(SceneQuery, RaycastSingle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">using</span> TCastTraits = TSQTraits&lt;FHitRaycast, ESweepOrRay::Raycast, ESingleMultiOrTest::Single&gt;;</span><br><span class="line">	<span class="keyword">return</span> TSceneCastCommon&lt;TCastTraits&gt;(World, OutHit, FRaycastSQAdditionalInputs(), Start, End, TraceChannel, Params, ResponseParams, ObjectParams);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> FGenericPhysicsInterface::RaycastSingle(<span class="keyword">const</span> UWorld* World, struct FHitResult&amp; OutHit, <span class="keyword">const</span> FVector Start, <span class="keyword">const</span> FVector End, ECollisionChannel TraceChannel, <span class="keyword">const</span> struct FCollisionQueryParams&amp; Params, <span class="keyword">const</span> struct FCollisionResponseParams&amp; ResponseParams, <span class="keyword">const</span> struct FCollisionObjectQueryParams&amp; ObjectParams)</span><br><span class="line">&#123;</span><br><span class="line">    SCOPE_CYCLE_COUNTER(STAT_Collision_SceneQueryTotal);</span><br><span class="line">    SCOPE_CYCLE_COUNTER(STAT_Collision_RaycastSingle);</span><br><span class="line">    CSV_SCOPED_TIMING_STAT(SceneQuery, RaycastSingle);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">using</span> TCastTraits = TSQTraits&lt;FHitRaycast, ESweepOrRay::Raycast, ESingleMultiOrTest::Single&gt;;</span><br><span class="line">    <span class="keyword">return</span> TSceneCastCommon&lt;TCastTraits&gt;(World, OutHit, FRaycastSQAdditionalInputs(), Start, End, TraceChannel, Params, ResponseParams, ObjectParams);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这里先不分析具体的源码了，说一下大概的原理：3D场景里面的物体都有一个bounds包围盒，可以求出六个面的平面方程，而射线也有一个方程表示，直接去求交即可。</p>
 
